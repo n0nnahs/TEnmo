@@ -22,10 +22,10 @@ public class RestAccountService  {
 		this.BASE_URL = url;
 	}
 	
-	public Account getAccountBalance(int id) throws AccountServiceException {
+	public Account getAccountBalance(int accountId) throws AccountServiceException {
 		Account balance = null;
 		try {
-			balance = restTemplate.exchange(BASE_URL + "accounts/balance", HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
+			balance = restTemplate.exchange(BASE_URL + "accounts" + accountId + "/balance", HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
 		} catch (RestClientResponseException ex) {
 			throw new AccountServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
 		}
