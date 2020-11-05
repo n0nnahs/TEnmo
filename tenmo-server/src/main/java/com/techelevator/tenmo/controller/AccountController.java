@@ -22,7 +22,6 @@ public class AccountController {
 		this.accountDAO = dao;
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
 	@RequestMapping(path = "/accounts", method = RequestMethod.GET)
 	public List<Account> list(){
 		return accountDAO.list();
@@ -35,7 +34,7 @@ public class AccountController {
 	
 	@RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.GET)
 	public Double getBalance(@PathVariable int id) {
-		return accountDAO.getBalance(id);
+		return accountDAO.getAccount(id).getBalance();
 	}
 	
 }

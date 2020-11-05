@@ -8,9 +8,7 @@ public interface AccountDAO {
 	List<Account> list();
 	
 	Account getAccount(int id);
-	
-	double getBalance(int id);
-		
-	double updateBalance(int id, int amount);
+			
+	Double updateBalance(int id, int amount);
 	
 }
