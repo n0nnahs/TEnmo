@@ -20,20 +20,13 @@ public class AccountSqlDAO implements AccountDAO {
 	public AccountSqlDAO(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
-	
-	@Override
-	public double getBalance(int id) {
-		String sql = "SELECT balance FROM accounts WHERE user_id = ?";
-		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
-		return results.getDouble(1);
-	}
 
 	@Override
-	public double updateBalance(int amount, int id) {
+	public Double updateBalance(int newBalance, int id) {
 		String sql = "UPDATE accounts SET balance = ? WHERE user_id = ?";
-		jdbcTemplate.update(sql, amount, id);
+		jdbcTemplate.update(sql, newBalance, id);
 		
-		return getBalance(id);
+		return getAccount(id).getBalance();
 	}
 
 	@Override
@@ -52,7 +45,7 @@ public class AccountSqlDAO implements AccountDAO {
 
 	@Override
 	public Account getAccount(int id) {
-		String sql = "SELECT user_id, balance FROM accounts WHERE user_id = ?";
+		String sql = "SELECT user_id, balance, account_id, username FROM accounts JOIN users USING(user_id) WHERE user_id = ?";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
 		if(results.next()) {
 			return mapRowToAccount(results);
