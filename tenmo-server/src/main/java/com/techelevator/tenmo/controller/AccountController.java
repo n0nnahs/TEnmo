@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +36,11 @@ public class AccountController {
 	@RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.GET)
 	public Double getBalance(@PathVariable int id) {
 		return accountDAO.getAccount(id).getBalance();
+	}
+	@RequestMapping(path = "/accounts/balance", method = RequestMethod.GET)
+	public Double getBalance(Principal principal) {
+		principal.getName();
+		return accountDAO.getAccount().getBalance();
 	}
 	
 }
