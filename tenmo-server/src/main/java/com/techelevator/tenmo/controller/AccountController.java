@@ -12,7 +12,7 @@ import com.techelevator.tenmo.dao.AccountDAO;
 import com.techelevator.tenmo.dao.AccountSqlDAO;
 import com.techelevator.tenmo.model.Account;
 
-
+@PreAuthorize("isAuthenticated()")
 @RestController
 public class AccountController {
 
@@ -22,15 +22,20 @@ public class AccountController {
 		this.accountDAO = dao;
 	}
 	
-	@PreAuthorize("permitAll")
-	@RequestMapping(path = "/account", method = RequestMethod.GET)
+	@PreAuthorize("hasRole('ADMIN')")
+	@RequestMapping(path = "/accounts", method = RequestMethod.GET)
 	public List<Account> list(){
 		return accountDAO.list();
 	}
 	
-	@RequestMapping(path = "/account/{id}", method = RequestMethod.GET)
+	@RequestMapping(path = "/accounts/{id}", method = RequestMethod.GET)
 	public Account get(@PathVariable int id) {
 		return accountDAO.getAccount(id);
+	}
+	
+	@RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.GET)
+	public Double getBalance(@PathVariable int id) {
+		return accountDAO.getBalance(id);
 	}
 	
 }
