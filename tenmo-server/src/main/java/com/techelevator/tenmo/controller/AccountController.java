@@ -30,17 +30,22 @@ public class AccountController {
 	
 	@RequestMapping(path = "/accounts/{id}", method = RequestMethod.GET)
 	public Account get(@PathVariable int id) {
-		return accountDAO.getAccount(id);
+		return accountDAO.getAccountById(id);
 	}
 	
 	@RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.GET)
 	public Double getBalance(@PathVariable int id) {
-		return accountDAO.getAccount(id).getBalance();
+		return accountDAO.getAccountById(id).getBalance();
 	}
+	
 	@RequestMapping(path = "/accounts/balance", method = RequestMethod.GET)
 	public Double getBalance(Principal principal) {
+<<<<<<< HEAD
 		principal.getName();
 		return accountDAO.getAccount(id).getBalance();
+=======
+		return (accountDAO.getAccountByUsername(principal.getName())).getBalance();
+>>>>>>> 02f27ecf9275856cef62d003740e2e3564db0b3f
 	}
 	
 }

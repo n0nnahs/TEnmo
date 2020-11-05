@@ -26,7 +26,7 @@ public class AccountSqlDAO implements AccountDAO {
 		String sql = "UPDATE accounts SET balance = ? WHERE user_id = ?";
 		jdbcTemplate.update(sql, newBalance, id);
 		
-		return getAccount(id).getBalance();
+		return getAccountById(id).getBalance();
 	}
 
 	@Override
@@ -44,9 +44,10 @@ public class AccountSqlDAO implements AccountDAO {
 	} 
 
 	@Override
-	public Account getAccount(int id) {
+	public Account getAccountById(int id) {
 		String sql = "SELECT user_id, balance, account_id, username FROM accounts JOIN users USING(user_id) WHERE user_id = ?";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
+		
 		if(results.next()) {
 			return mapRowToAccount(results);
 		}
@@ -54,6 +55,18 @@ public class AccountSqlDAO implements AccountDAO {
 			return null;
 		}
 		
+	}
+	
+	public Account getAccountByUsername(String username) {
+		String sql = "SELECT user_id, balance, account_id, username FROM accounts JOIN users USING(user_id) WHERE username = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);
+	
+		if(results.next()) {
+			return mapRowToAccount(results);
+		}else {
+		
+			return null;
+		}
 	}
 
 	private Account mapRowToAccount(SqlRowSet results) {
