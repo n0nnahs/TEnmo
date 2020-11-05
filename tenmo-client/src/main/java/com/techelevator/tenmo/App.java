@@ -6,6 +6,7 @@ import com.techelevator.tenmo.services.AccountServiceException;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
 import com.techelevator.tenmo.services.RestAccountService;
+import com.techelevator.tenmo.services.RestTransferService;
 import com.techelevator.view.ConsoleService;
 import com.techelevator.tenmo.models.Account;
 
@@ -29,7 +30,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
     private ConsoleService console;
     private AuthenticationService authenticationService;
     private RestAccountService accountService = new RestAccountService(API_BASE_URL);
-    private Account account = new Account();
+    private RestTransferService transferService = new RestTransferService(API_BASE_URL);
 
     public static void main(String[] args) throws AccountServiceException  {
     	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL));
@@ -80,7 +81,9 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
+		System.out.println("Your transfer history: ");
+		System.out.println("---------------------");
+		System.out.println();
 		
 	}
 
@@ -147,6 +150,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		    try {
 				currentUser = authenticationService.login(credentials);
 				RestAccountService.AUTH_TOKEN = currentUser.getToken();
+				RestTransferService.AUTH_TOKEN = currentUser.getToken();
 			} catch (AuthenticationServiceException e) {
 				System.out.println("LOGIN ERROR: "+e.getMessage());
 				System.out.println("Please attempt to login again.");
