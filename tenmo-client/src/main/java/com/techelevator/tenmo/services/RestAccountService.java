@@ -3,6 +3,9 @@ package com.techelevator.tenmo.services;
 import com.techelevator.tenmo.models.User;
 import com.techelevator.view.ConsoleService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,21 +19,42 @@ public class RestAccountService  {
 	public static String AUTH_TOKEN = "";
 	private final String BASE_URL;
 	private final RestTemplate restTemplate = new RestTemplate();
+	private Account account = new Account();
 	
 	
 	public RestAccountService(String url) {
 		this.BASE_URL = url;
 	}
 	
-	public Account getAccountBalance(int accountId) throws AccountServiceException {
-		Account balance = null;
+	public Double getAccountBalance(int accountId) throws AccountServiceException {
+		Double balance = null;
 		try {
-			balance = restTemplate.exchange(BASE_URL + "accounts" + accountId + "/balance", HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
+			balance = restTemplate.exchange(BASE_URL + "accounts/" + account.getAccountId() + "/balance" , HttpMethod.GET, makeAuthEntity(), Double.class).getBody();
 		} catch (RestClientResponseException ex) {
 			throw new AccountServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
 		}
 		return balance;
 	}
+	public Double getAccountBalance() throws AccountServiceException {
+		Double balance = null;
+		try {
+			balance = restTemplate.exchange(BASE_URL + "accounts/balance" , HttpMethod.GET, makeAuthEntity(), Double.class).getBody();
+		} catch (RestClientResponseException ex) {
+			throw new AccountServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
+		}
+		return balance;
+	}
+	public User[] listAllUsers() throws AccountServiceException {
+		User[] users = null;
+		try {
+			users = restTemplate.exchange(BASE_URL + "users" , HttpMethod.GET, makeAuthEntity(), User[].class).getBody();
+		} catch (RestClientResponseException ex) {
+			throw new AccountServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
+		}
+		return users;
+	}
+		
+
 
 	
 	  private HttpEntity makeAuthEntity() {

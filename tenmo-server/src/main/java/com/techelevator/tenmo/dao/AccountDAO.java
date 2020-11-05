@@ -6,11 +6,11 @@ import com.techelevator.tenmo.model.Account;
 public interface AccountDAO {
 	
 	List<Account> list();
+				
+	Double updateBalance(int id, int amount);
+
+	Account getAccountById(int id);
 	
-	Account getAccount(int id);
-	
-	double getBalance(int id);
-		
-	double updateBalance(int id, int amount);
+	Account getAccountByUsername(String username);
 	
 }

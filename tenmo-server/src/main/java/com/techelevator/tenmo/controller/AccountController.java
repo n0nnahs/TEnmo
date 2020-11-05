@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,7 +13,7 @@ import com.techelevator.tenmo.dao.AccountDAO;
 import com.techelevator.tenmo.dao.AccountSqlDAO;
 import com.techelevator.tenmo.model.Account;
 
-
+@PreAuthorize("isAuthenticated()")
 @RestController
 public class AccountController {
 
@@ -22,15 +23,24 @@ public class AccountController {
 		this.accountDAO = dao;
 	}
 	
-	@PreAuthorize("permitAll")
-	@RequestMapping(path = "/account", method = RequestMethod.GET)
+	@RequestMapping(path = "/accounts", method = RequestMethod.GET)
 	public List<Account> list(){
 		return accountDAO.list();
 	}
 	
-	@RequestMapping(path = "/account/{id}", method = RequestMethod.GET)
+	@RequestMapping(path = "/accounts/{id}", method = RequestMethod.GET)
 	public Account get(@PathVariable int id) {
-		return accountDAO.getAccount(id);
+		return accountDAO.getAccountById(id);
+	}
+	
+	@RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.GET)
+	public Double getBalance(@PathVariable int id) {
+		return accountDAO.getAccountById(id).getBalance();
+	}
+	
+	@RequestMapping(path = "/accounts/balance", method = RequestMethod.GET)
+	public Double getBalance(Principal principal) {
+		return (accountDAO.getAccountByUsername(principal.getName())).getBalance();
 	}
 	
 }
