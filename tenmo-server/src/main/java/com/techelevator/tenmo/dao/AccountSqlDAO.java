@@ -57,6 +57,7 @@ public class AccountSqlDAO implements AccountDAO {
 		
 	}
 	
+	@Override
 	public Account getAccountByUsername(String username) {
 		String sql = "SELECT user_id, balance, account_id, username FROM accounts JOIN users USING(user_id) WHERE username = ?";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);

@@ -40,12 +40,7 @@ public class AccountController {
 	
 	@RequestMapping(path = "/accounts/balance", method = RequestMethod.GET)
 	public Double getBalance(Principal principal) {
-<<<<<<< HEAD
-		principal.getName();
-		return accountDAO.getAccount(id).getBalance();
-=======
 		return (accountDAO.getAccountByUsername(principal.getName())).getBalance();
->>>>>>> 02f27ecf9275856cef62d003740e2e3564db0b3f
 	}
 	
 }
