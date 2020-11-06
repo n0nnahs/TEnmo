@@ -1,4 +1,4 @@
-package com.techelevator.tenmo.models;
+package com.techelevator.tenmo.model;
 
 public class Transfer {
 	private int transferId;
@@ -12,12 +12,12 @@ public class Transfer {
 		
 	}
 	
-	public Transfer(int transferId, int transferType, int statusId, int accountFrom, int accountTo, double amount) {
-		  this.transferId = transferId;
-	      this.statusId = statusId;
-	      this.accountFrom = accountFrom;
-	      this.accountTo = accountTo;
-	      this.amount = amount;
+	public Transfer(int transferType, int statusId, int accountFrom, int accountTo, double amount) {
+	    this.statusId = statusId;
+	    this.transferType = transferType;
+	    this.accountFrom = accountFrom;
+	    this.accountTo = accountTo;
+	    this.amount = amount;
 	}
 
 	public int getTransferId() {
