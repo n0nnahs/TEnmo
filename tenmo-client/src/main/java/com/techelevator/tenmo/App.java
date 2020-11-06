@@ -1,6 +1,7 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.models.AuthenticatedUser;
+import com.techelevator.tenmo.models.Transfer;
 import com.techelevator.tenmo.models.TransferDTO;
 import com.techelevator.tenmo.models.UserCredentials;
 import com.techelevator.tenmo.services.AccountServiceException;
@@ -83,9 +84,14 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void viewTransferHistory() {
-		System.out.println("Your transfer history: ");
-		System.out.println("---------------------");
-		System.out.println();
+		System.out.println("Your transfer history: \n");
+		Transfer[] transfers =  transferService.getTransfersforUser();
+		for(Transfer t: transfers) {
+			if(t == null) {
+				System.out.println("There are no transactions for this user");
+			}
+			System.out.println(t.toString());
+		}
 		
 	}
 
@@ -94,7 +100,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		
 	}
 
-	private void sendBucks() {
+	private void sendBucks() throws AccountServiceException {
 		Account[] theAccounts = transferService.viewAvailableAccounts();
 		System.out.println("Available account ID's for transfer: \n");
 		for(Account account : theAccounts) {
