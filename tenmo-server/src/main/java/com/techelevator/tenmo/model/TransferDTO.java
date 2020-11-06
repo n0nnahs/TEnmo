@@ -1,7 +1,14 @@
 package com.techelevator.tenmo.model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
 public class TransferDTO {
+	
+	@NotNull
 	int transferToId;
+	
+	@Positive(message = "Amount to send cannot be negative amount")
 	Double amount;
 	
 	

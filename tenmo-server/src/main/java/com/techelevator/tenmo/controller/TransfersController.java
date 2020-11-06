@@ -3,6 +3,8 @@ package com.techelevator.tenmo.controller;
 import java.security.Principal;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +39,7 @@ public class TransfersController {
 	
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
-	public void transfer(Principal principal, @RequestBody TransferDTO transferDTO) {
+	public void transfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) {
 		//uses the principal to get username, and then uses the username to get the account and then gets the account ID from the username
 		int fromAccount = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
 		
