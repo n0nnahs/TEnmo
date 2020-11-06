@@ -32,7 +32,9 @@ public class AccountSqlDAO implements AccountDAO {
 	@Override
 	public List<Account> list() {
 		List<Account> accounts = new ArrayList<>();
-		String sql = "SELECT user_id, account_id, username, balance FROM accounts JOIN users USING(user_id)";
+		String sql = "SELECT user_id, account_id, username, balance "
+				   + "FROM accounts "
+				   + "JOIN users USING(user_id)";
 				
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 		while(results.next()) {
