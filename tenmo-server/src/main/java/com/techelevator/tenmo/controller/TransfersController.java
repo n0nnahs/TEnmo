@@ -58,22 +58,22 @@ public class TransfersController {
 		Double fromAccountBalance = accountDAO.getAccountById(fromAccount).getBalance();
 		Double newFromAccountBalance = fromAccountBalance - transfer.getAmount();
 
-		//try {
-			if(newFromAccountBalance >= 0) {
-				//writes the transfer to the DB
-				transferDAO.newTransfer(transfer);
-			
-				//update balance in fromaccount to subtract amount
-				accountDAO.updateBalance(newFromAccountBalance, transfer.getAccountFrom());
+
+		if(newFromAccountBalance >= 0) {
+			//writes the transfer to the DB
+			transferDAO.newTransfer(transfer);
+		
+			//update balance in fromaccount to subtract amount
+			accountDAO.updateBalance(newFromAccountBalance, transfer.getAccountFrom());
+
+			//add amount to toaccount
+			Double newToAccountBalance = accountDAO.getAccountById(transfer.getAccountTo()).getBalance() + transfer.getAmount();
+			//update balance in toaccount add amount
+			accountDAO.updateBalance(newToAccountBalance, transfer.getAccountTo());
+		}
+		else {
+			throw new Exception();
+		}
 	
-				//add amount to toaccount
-				Double newToAccountBalance = accountDAO.getAccountById(transfer.getAccountTo()).getBalance() + transfer.getAmount();
-				//update balance in toaccount add amount
-				accountDAO.updateBalance(newToAccountBalance, transfer.getAccountTo());
-			}
-			else {
-				throw new Exception();
-			}
-		//}
 	}
 }
