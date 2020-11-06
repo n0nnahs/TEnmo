@@ -68,12 +68,26 @@ public class AccountSqlDAO implements AccountDAO {
 		
 			return null;
 		}
+		}
+	//attempt to create new Account object to use to create new Account to compare against
+	@Override
+	public void save(Account newAccount) {
+		String sqlInsertAccount = "INSERT INTO accounts(account_id, balance, user_id) VALUES (?, ?, ?)";
+		newAccount.setAccountId(getNextAccountId());
+		jdbcTemplate.update(sqlInsertAccount, newAccount.getAccountId(), 
+					newAccount.getBalance(), newAccount.getUserId());
 	}
-
+	private int getNextAccountId() {
+		SqlRowSet nextIdResult = jdbcTemplate.queryForRowSet("SELECT nextval('seq_account_id')");
+		if (nextIdResult.next()) {
+			return nextIdResult.getInt(1);
+			} else {
+				throw new RuntimeException("Something went wrong while getting an id for the new account");
+			}
+	}
 	private Account mapRowToAccount(SqlRowSet results) {
 		Account account = new Account();
 		account.setAccountId(results.getInt("account_id"));
-		account.setUsername(results.getString("username"));
 		account.setBalance(results.getDouble("balance"));
 		account.setUserId(results.getInt("user_id"));
 		
