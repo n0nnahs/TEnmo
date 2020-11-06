@@ -43,4 +43,5 @@ public class AccountController {
 		return (accountDAO.getAccountByUsername(principal.getName())).getBalance();
 	}
 	
+	
 }
