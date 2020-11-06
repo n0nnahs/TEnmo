@@ -22,7 +22,7 @@ public class AccountSqlDAO implements AccountDAO {
 	}
 
 	@Override
-	public Double updateBalance(int newBalance, int id) {
+	public Double updateBalance(Double newBalance, int id) {
 		String sql = "UPDATE accounts SET balance = ? WHERE user_id = ?";
 		jdbcTemplate.update(sql, newBalance, id);
 		

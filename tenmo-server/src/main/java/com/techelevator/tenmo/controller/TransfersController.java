@@ -3,10 +3,12 @@ package com.techelevator.tenmo.controller;
 import java.security.Principal;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.techelevator.tenmo.dao.AccountDAO;
@@ -33,13 +35,33 @@ public class TransfersController {
 		return transferDAO.listAllForUser(accountId);
 	}
 	
+	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
 	public void transfer(Principal principal, @RequestBody TransferDTO transferDTO) {
+		//uses the principal to get username, and then uses the username to get the account and then gets the account ID from the username
+		int fromAccount = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
+		
+		//takes body info from client side and creates transferDTO object
 		Transfer transfer = new Transfer();
 		transfer.setAmount(transferDTO.getAmount());
 		transfer.setAccountTo(transferDTO.getTransferToId());
-		transfer.setAccountFrom((accountDAO.getAccountByUsername(principal.getName())).getAccountId());
+		transfer.setAccountFrom(fromAccount);
 		
-		transferDAO.newTransfer(transfer);
+		Double fromAccountBalance = accountDAO.getAccountById(fromAccount).getBalance();
+		Double newFromAccountBalance = fromAccountBalance - transfer.getAmount();
+
+		if(newFromAccountBalance >= 0) {
+			//writes the transfer to the DB
+			transferDAO.newTransfer(transfer);
+			
+			//update balance in fromaccount to subtract amount
+			accountDAO.updateBalance(newFromAccountBalance, transfer.getAccountFrom());
+
+			//add amount to toaccount
+			Double newToAccountBalance = accountDAO.getAccountById(transfer.getAccountTo()).getBalance() + transfer.getAmount();
+			//update balance in toaccount add amount
+			accountDAO.updateBalance(newToAccountBalance, transfer.getAccountTo());
+		}
+
 	}
 }
