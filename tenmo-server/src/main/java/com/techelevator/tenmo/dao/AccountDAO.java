@@ -13,4 +13,6 @@ public interface AccountDAO {
 	
 	Account getAccountByUsername(String username);
 	
+	public void save(Account newAccount);
+	
 }
