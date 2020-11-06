@@ -8,6 +8,6 @@ public interface TransfersDAO {
 	
 	List<Transfer> listAllForUser(int accountId);
 	
-	int newTransfer(int transferType, int statusId, int accountFrom, int accountTo, Double balance); 
+	int newTransfer(Transfer transfer); 
 	
 }

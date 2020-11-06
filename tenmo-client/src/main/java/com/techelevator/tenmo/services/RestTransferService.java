@@ -33,7 +33,7 @@ public class RestTransferService {
 		return transfer;
 	}
 	public void sendTransfer(TransferDTO transferDto) {
-		restTemplate.exchange(BASE_URL + "accounts/balance", HttpMethod.POST, makeAuthTransferDTO(transferDto), Transfer.class);
+		restTemplate.exchange(BASE_URL + "transfers", HttpMethod.POST, makeAuthTransferDTO(transferDto), Transfer.class);
 	}
 	public Account[] viewAvailableAccounts() throws AccountServiceException {
 		Account[] accounts = null;

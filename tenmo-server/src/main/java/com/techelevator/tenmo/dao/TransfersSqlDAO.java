@@ -38,11 +38,11 @@ public class TransfersSqlDAO implements TransfersDAO {
 	}
 
 	@Override
-	public int newTransfer(int transferType, int statusId, int accountFrom, int accountTo, Double balance) {
+	public int newTransfer(Transfer transfer) {
 		String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount)"
 				   + "VALUES	  			(?, 			   ?, 				   ?, 			 ?, 		 ?)"
 				   + "RETURNING transfer_id";
-		SqlRowSet returningId = jdbcTemplate.queryForRowSet(sql, transferType, statusId, accountFrom, accountTo, balance);
+		SqlRowSet returningId = jdbcTemplate.queryForRowSet(sql, transfer.getTransferType(), transfer.getStatusId(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
 		returningId.next();
 		int transferId = returningId.getInt("transfer_id");
 		return transferId;
