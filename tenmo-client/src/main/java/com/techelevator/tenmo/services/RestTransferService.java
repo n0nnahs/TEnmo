@@ -32,8 +32,12 @@ public class RestTransferService {
 		transfer = restTemplate.exchange(BASE_URL + "transfers/{id}", HttpMethod.GET, makeAuthEntity(), Transfer.class).getBody();
 		return transfer;
 	}
-	public void sendTransfer(TransferDTO transferDto) {
-		restTemplate.exchange(BASE_URL + "transfers", HttpMethod.POST, makeAuthTransferDTO(transferDto), Transfer.class);
+	public void sendTransfer(TransferDTO transferDto) throws TransferServiceException {
+		try {
+			restTemplate.exchange(BASE_URL + "transfers", HttpMethod.POST, makeAuthTransferDTO(transferDto), Transfer.class);
+		} catch (RestClientResponseException ex) {
+			throw new TransferServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
+		}
 	}
 	public Account[] viewAvailableAccounts() throws AccountServiceException {
 		Account[] accounts = null;
