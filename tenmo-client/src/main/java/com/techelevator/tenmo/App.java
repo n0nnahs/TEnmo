@@ -104,20 +104,23 @@ public class App {
 	}
 
 	private void sendBucks() throws AccountServiceException, TransferServiceException {
+		boolean goodInput = false;
+		while (!goodInput) {
 		Account[] theAccounts = transferService.viewAvailableAccounts();
 		System.out.println("Available account ID's for transfer: \n");
 		for (Account account : theAccounts) {
 			System.out.println(" Account ID (" + account.getAccountId() + ")");
 		}
 		transferDto.setTransferToId(console.getUserInputInteger("\nPlease enter the account ID to transfer to"));
-		boolean goodInput = false;
-		while (!goodInput) {
+
 			try {
 				transferDto.setAmount(console.getUserInputDouble("Please enter the amount you would like to send"));
+				goodInput = true;
 			} catch (Exception e) {
 				e.getMessage();
 			}
 			transferService.sendTransfer(transferDto);
+			
 		}
 
 	}
