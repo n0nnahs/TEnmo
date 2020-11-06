@@ -8,6 +8,7 @@ public class Transfer {
 	private int accountTo;
 	private double amount;
 	
+	
 	public Transfer() {
 		
 	}

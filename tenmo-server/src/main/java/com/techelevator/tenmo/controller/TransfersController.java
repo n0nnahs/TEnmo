@@ -39,7 +39,7 @@ public class TransfersController {
 	
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
-	public void transfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) {
+	public void transfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) throws Exception{
 		//uses the principal to get username, and then uses the username to get the account and then gets the account ID from the username
 		int fromAccount = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
 		
@@ -52,18 +52,22 @@ public class TransfersController {
 		Double fromAccountBalance = accountDAO.getAccountById(fromAccount).getBalance();
 		Double newFromAccountBalance = fromAccountBalance - transfer.getAmount();
 
-		if(newFromAccountBalance >= 0) {
-			//writes the transfer to the DB
-			transferDAO.newTransfer(transfer);
+		//try {
+			if(newFromAccountBalance >= 0) {
+				//writes the transfer to the DB
+				transferDAO.newTransfer(transfer);
 			
-			//update balance in fromaccount to subtract amount
-			accountDAO.updateBalance(newFromAccountBalance, transfer.getAccountFrom());
-
-			//add amount to toaccount
-			Double newToAccountBalance = accountDAO.getAccountById(transfer.getAccountTo()).getBalance() + transfer.getAmount();
-			//update balance in toaccount add amount
-			accountDAO.updateBalance(newToAccountBalance, transfer.getAccountTo());
-		}
-
+				//update balance in fromaccount to subtract amount
+				accountDAO.updateBalance(newFromAccountBalance, transfer.getAccountFrom());
+	
+				//add amount to toaccount
+				Double newToAccountBalance = accountDAO.getAccountById(transfer.getAccountTo()).getBalance() + transfer.getAmount();
+				//update balance in toaccount add amount
+				accountDAO.updateBalance(newToAccountBalance, transfer.getAccountTo());
+			}
+			else {
+				throw new Exception();
+			}
+		//}
 	}
 }
