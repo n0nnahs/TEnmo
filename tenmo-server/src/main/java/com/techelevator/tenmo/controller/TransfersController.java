@@ -37,6 +37,12 @@ public class TransfersController {
 		return transferDAO.listAllForUser(accountId);
 	}
 	
+	@RequestMapping(path = "/transfers/pending", method = RequestMethod.GET)
+	public List<Transfer> listPending(Principal principal){
+	int accountId = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
+	return transferDAO.listPendingTransfers(accountId);
+	}
+	
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
 	public void transfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) throws Exception{

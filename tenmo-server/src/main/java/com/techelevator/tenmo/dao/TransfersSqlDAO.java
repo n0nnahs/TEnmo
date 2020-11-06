@@ -41,9 +41,27 @@ public class TransfersSqlDAO implements TransfersDAO {
 	public void newTransfer(Transfer transfer) {
 		String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount)"
 				   + "VALUES	  			(2, 			   2, 				   ?, 			 ?, 		 ?)";
-		int returningId = jdbcTemplate.update(sql, transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+		 jdbcTemplate.update(sql, transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
 	}
 
+	@Override
+	public List<Transfer> listPendingTransfers(int accountId){
+		List<Transfer> pending = new ArrayList<>();
+		String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount, username "
+				   + "FROM transfers "
+				   + "JOIN accounts ON account_from = account_id "
+				   + "JOIN users USING(user_id) "
+				   + "WHERE (account_from = ? OR account_to = ?) AND transfer_status_id = 1";	
+		
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId, accountId);
+		while(results.next()) {
+			Transfer transferResult = mapRowToTransfer(results);
+			pending.add(transferResult);
+		}
+		return pending;
+	}
+	
+	
 	private Transfer mapRowToTransfer(SqlRowSet results) {
 		Transfer transfer = new Transfer();
 		
