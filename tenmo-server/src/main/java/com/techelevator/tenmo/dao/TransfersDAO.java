@@ -6,7 +6,7 @@ import com.techelevator.tenmo.model.Transfer;
 
 public interface TransfersDAO {
 	
-	List<Transfer> listAllForUser(String username);
+	List<Transfer> listAllForUser(int accountId);
 	
 	int newTransfer(int transferType, int statusId, int accountFrom, int accountTo, Double balance); 
 	

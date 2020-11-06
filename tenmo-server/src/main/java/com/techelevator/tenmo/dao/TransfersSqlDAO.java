@@ -3,21 +3,33 @@ package com.techelevator.tenmo.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import com.techelevator.tenmo.model.Transfer;
 
+@Component
 public class TransfersSqlDAO implements TransfersDAO {
 	
 	private JdbcTemplate jdbcTemplate;
 	
+	public TransfersSqlDAO(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+	
 	@Override
-	public List<Transfer> listAllForUser(String username) {
+	public List<Transfer> listAllForUser(int accountId) {
 		List<Transfer> transfers = new ArrayList<>();
-		String sql = "SELECT transfer_type_id, transfer_status_id, account_from, account_to, amount FROM transfers JOIN users ON account_from = user_id WHERE user_id = ? ";
+		String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount, username "
+				   + "FROM transfers "
+				   + "JOIN accounts ON account_from = account_id "
+				   + "JOIN users USING(user_id) "
+				   + "WHERE account_from = ? OR account_to = ?";
 		
-		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId, accountId);
 		while(results.next()) {
 			Transfer transferResult = mapRowToTransfer(results);
 			transfers.add(transferResult);
@@ -39,6 +51,7 @@ public class TransfersSqlDAO implements TransfersDAO {
 	private Transfer mapRowToTransfer(SqlRowSet results) {
 		Transfer transfer = new Transfer();
 		
+		transfer.setTransferId(results.getInt("transfer_id"));
 		transfer.setTransferType(results.getInt("transfer_type_id"));
 		transfer.setStatusId(results.getInt("transfer_status_id"));
 		transfer.setAccountFrom(results.getInt("account_from"));
