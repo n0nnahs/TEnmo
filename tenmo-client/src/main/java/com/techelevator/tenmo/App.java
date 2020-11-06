@@ -87,7 +87,7 @@ public class App {
 
 	private void viewTransferHistory() {
 		Transfer[] transfers = transferService.getTransfersforUser();
-		if (transfers == null) {
+		if (transfers.length == 0) {
 			System.out.println("There are no transactions for this user");
 		} else
 			System.out.println("Your transfer history: \n");
