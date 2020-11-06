@@ -33,6 +33,11 @@ public class RestTransferService {
 	public void sendTransfer(Transfer transfer) {
 		restTemplate.exchange(BASE_URL + "transfers", HttpMethod.POST, makeAuthEntity(), Transfer.class);
 	}
+	public Account[] viewAvailableAccounts() {
+		Account[] accounts = null;
+		accounts = restTemplate.exchange(BASE_URL + "accounts", HttpMethod.GET, makeAuthEntity(), Account[].class).getBody();
+		return accounts;
+	}
 
 
 	private HttpEntity makeAuthEntity() {

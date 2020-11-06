@@ -13,7 +13,7 @@ public class Transfer {
 	}
 	
 	public Transfer(int transferId, int transferType, int statusId, int accountFrom, int accountTo, double amount) {
-			this.transferId = transferId;
+		  this.transferId = transferId;
 	      this.statusId = statusId;
 	      this.accountFrom = accountFrom;
 	      this.accountTo = accountTo;
