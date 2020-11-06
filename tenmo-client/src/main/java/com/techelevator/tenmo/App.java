@@ -1,6 +1,7 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.models.AuthenticatedUser;
+import com.techelevator.tenmo.models.TransferDTO;
 import com.techelevator.tenmo.models.UserCredentials;
 import com.techelevator.tenmo.services.AccountServiceException;
 import com.techelevator.tenmo.services.AuthenticationService;
@@ -31,6 +32,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
     private AuthenticationService authenticationService;
     private RestAccountService accountService = new RestAccountService(API_BASE_URL);
     private RestTransferService transferService = new RestTransferService(API_BASE_URL);
+    private TransferDTO transferDto = new TransferDTO();
 
     public static void main(String[] args) throws AccountServiceException  {
     	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL));
@@ -93,7 +95,14 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
+		Account[] theAccounts = transferService.viewAvailableAccounts();
+		System.out.println("Available account ID's for transfer: \n");
+		for(Account account : theAccounts) {
+			System.out.println(" Account ID (" + account.getAccountId() + ")");
+		}
+		transferDto.setTransferToId(console.getUserInputInteger("\nPlease enter the account ID to transfer to"));
+		transferDto.setAmount(console.getUserInputDouble("Please enter the amount you would like to send"));
+		transferService.sendTransfer(transferDto);
 		
 	}
 

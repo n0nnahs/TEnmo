@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.techelevator.tenmo.models.Account;
 import com.techelevator.tenmo.models.Transfer;
+import com.techelevator.tenmo.models.TransferDTO;
 
 public class RestTransferService {
 	public static String AUTH_TOKEN = "";
@@ -30,8 +31,8 @@ public class RestTransferService {
 		transfer = restTemplate.exchange(BASE_URL + "transfers/{id}", HttpMethod.GET, makeAuthEntity(), Transfer.class).getBody();
 		return transfer;
 	}
-	public void sendTransfer(Transfer transfer) {
-		restTemplate.exchange(BASE_URL + "transfers", HttpMethod.POST, makeAuthEntity(), Transfer.class);
+	public void sendTransfer(TransferDTO transferDto) {
+		restTemplate.exchange(BASE_URL + "accounts/balance", HttpMethod.POST, makeAuthTransferDTO(transferDto), Transfer.class);
 	}
 	public Account[] viewAvailableAccounts() {
 		Account[] accounts = null;
@@ -44,6 +45,12 @@ public class RestTransferService {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setBearerAuth(AUTH_TOKEN);
 		HttpEntity entity = new HttpEntity<>(headers);
+		return entity;
+	}
+	private HttpEntity makeAuthTransferDTO(TransferDTO transferDto) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth(AUTH_TOKEN);
+		HttpEntity entity = new HttpEntity<>(transferDto, headers);
 		return entity;
 	}
 
