@@ -38,14 +38,10 @@ public class TransfersSqlDAO implements TransfersDAO {
 	}
 
 	@Override
-	public int newTransfer(Transfer transfer) {
+	public void newTransfer(Transfer transfer) {
 		String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount)"
-				   + "VALUES	  			(?, 			   ?, 				   ?, 			 ?, 		 ?)"
-				   + "RETURNING transfer_id";
-		SqlRowSet returningId = jdbcTemplate.queryForRowSet(sql, transfer.getTransferType(), transfer.getStatusId(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
-		returningId.next();
-		int transferId = returningId.getInt("transfer_id");
-		return transferId;
+				   + "VALUES	  			(2, 			   2, 				   ?, 			 ?, 		 ?)";
+		int returningId = jdbcTemplate.update(sql, transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
 	}
 
 	private Transfer mapRowToTransfer(SqlRowSet results) {

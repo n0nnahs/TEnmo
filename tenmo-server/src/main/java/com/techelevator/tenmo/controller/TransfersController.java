@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.techelevator.tenmo.dao.AccountDAO;
 import com.techelevator.tenmo.dao.TransfersDAO;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.TransferDTO;
 
 @RestController
 @PreAuthorize("isAuthenticated()")
@@ -33,7 +34,12 @@ public class TransfersController {
 	}
 	
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
-	public int transfer(@RequestBody Transfer transfer) {
-		return transferDAO.newTransfer(transfer);
+	public void transfer(Principal principal, @RequestBody TransferDTO transferDTO) {
+		Transfer transfer = new Transfer();
+		transfer.setAmount(transferDTO.getAmount());
+		transfer.setAccountTo(transferDTO.getTransferToId());
+		transfer.setAccountFrom((accountDAO.getAccountByUsername(principal.getName())).getAccountId());
+		
+		transferDAO.newTransfer(transfer);
 	}
 }

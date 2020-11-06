@@ -8,6 +8,6 @@ public interface TransfersDAO {
 	
 	List<Transfer> listAllForUser(int accountId);
 	
-	int newTransfer(Transfer transfer); 
+	void newTransfer(Transfer transfer); 
 	
 }
