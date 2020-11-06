@@ -87,10 +87,10 @@ public class App {
 
 	private void viewTransferHistory() {
 		Transfer[] transfers = transferService.getTransfersforUser();
-		if(transfers == null) {
+		if (transfers == null) {
 			System.out.println("There are no transactions for this user");
 		} else
-		System.out.println("Your transfer history: \n");
+			System.out.println("Your transfer history: \n");
 		for (Transfer t : transfers) {
 
 			System.out.println(t.toString());
@@ -110,12 +110,15 @@ public class App {
 			System.out.println(" Account ID (" + account.getAccountId() + ")");
 		}
 		transferDto.setTransferToId(console.getUserInputInteger("\nPlease enter the account ID to transfer to"));
-	    try {
-			transferDto.setAmount(console.getUserInputDouble("Please enter the amount you would like to send"));
-		} catch (Exception e) {
-			e.getMessage();
+		boolean goodInput = false;
+		while (!goodInput) {
+			try {
+				transferDto.setAmount(console.getUserInputDouble("Please enter the amount you would like to send"));
+			} catch (Exception e) {
+				e.getMessage();
+			}
+			transferService.sendTransfer(transferDto);
 		}
-		transferService.sendTransfer(transferDto);
 
 	}
 
