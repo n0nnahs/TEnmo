@@ -90,6 +90,7 @@ public class AccountSqlDAO implements AccountDAO {
 	private Account mapRowToAccount(SqlRowSet results) {
 		Account account = new Account();
 		account.setAccountId(results.getInt("account_id"));
+		account.setUsername(results.getString("username"));
 		account.setBalance(results.getDouble("balance"));
 		account.setUserId(results.getInt("user_id"));
 		
