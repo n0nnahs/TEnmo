@@ -38,12 +38,15 @@ public class TransfersSqlDAO implements TransfersDAO {
 	}
 
 	@Override
-	public void newTransfer(Transfer transfer) {
+	public int newTransfer(Transfer transfer) {
 		String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount)"
-				   + "VALUES	  			(2, 			   2, 				   ?, 			 ?, 		 ?)";
-		 jdbcTemplate.update(sql, transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+				   + "VALUES	  			(?, 			   2, 				   ?, 			 ?, 		 ?)"
+				   + "RETURNING transfer_id";
+	
+		 Long transferIdLong = jdbcTemplate.queryForObject(sql, Long.class, transfer.getTransferType(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+		 int transferId = transferIdLong.intValue();
+		 return transferId;
 	}
-
 	@Override
 	public List<Transfer> listPendingTransfers(int accountId){
 		List<Transfer> pending = new ArrayList<>();
@@ -61,6 +64,23 @@ public class TransfersSqlDAO implements TransfersDAO {
 		return pending;
 	}
 	
+	@Override
+	public List<Transfer> getTransferByID(int transferId) {
+		List<Transfer> transfer = new ArrayList<>();
+		String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount, username "
+				+ "FROM transfers "
+				+ "JOIN accounts ON account_from = account_id "
+				+ "JOIN users USING(user_id) "
+				+ "WHERE transfer_id = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transferId);
+		
+		while(results.next()) {
+			Transfer transferResult = mapRowToTransfer(results);
+			transfer.add(transferResult);
+		}
+		return transfer;
+		
+	}
 	
 	private Transfer mapRowToTransfer(SqlRowSet results) {
 		Transfer transfer = new Transfer();
@@ -74,5 +94,6 @@ public class TransfersSqlDAO implements TransfersDAO {
 		
 		return transfer;
 	}
+
 	
 }

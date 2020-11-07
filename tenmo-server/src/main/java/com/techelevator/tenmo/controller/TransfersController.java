@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,9 +33,12 @@ public class TransfersController {
 	}
 	
 	@RequestMapping(path = "/transfers", method = RequestMethod.GET)
-	public List<Transfer> list(Principal principal) {
-		int accountId = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
-		return transferDAO.listAllForUser(accountId);
+	public List<Transfer> list(Principal principal, @RequestParam(defaultValue = "-1") int id) {
+		if(id == -1) {
+			int accountId = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
+			return transferDAO.listAllForUser(accountId);
+		}else 
+			return transferDAO.getTransferByID(id);
 	}
 	
 	@RequestMapping(path = "/transfers/pending", method = RequestMethod.GET)
@@ -45,7 +49,7 @@ public class TransfersController {
 	
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
-	public void transfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) throws Exception{
+	public List<Transfer> transfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) throws Exception{
 		//uses the principal to get username, and then uses the username to get the account and then gets the account ID from the username
 		int fromAccount = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
 		
@@ -54,6 +58,7 @@ public class TransfersController {
 		transfer.setAmount(transferDTO.getAmount());
 		transfer.setAccountTo(transferDTO.getTransferToId());
 		transfer.setAccountFrom(fromAccount);
+		transfer.setTransferType(transferDTO.getTransferTypeId());
 		
 		Double fromAccountBalance = accountDAO.getAccountById(fromAccount).getBalance();
 		Double newFromAccountBalance = fromAccountBalance - transfer.getAmount();
@@ -61,7 +66,7 @@ public class TransfersController {
 
 		if(newFromAccountBalance >= 0) {
 			//writes the transfer to the DB
-			transferDAO.newTransfer(transfer);
+			int id = transferDAO.newTransfer(transfer);
 		
 			//update balance in fromaccount to subtract amount
 			accountDAO.updateBalance(newFromAccountBalance, transfer.getAccountFrom());
@@ -70,6 +75,9 @@ public class TransfersController {
 			Double newToAccountBalance = accountDAO.getAccountById(transfer.getAccountTo()).getBalance() + transfer.getAmount();
 			//update balance in toaccount add amount
 			accountDAO.updateBalance(newToAccountBalance, transfer.getAccountTo());
+			
+			//returns transfer ID for confirmation
+			return transferDAO.getTransferByID(id);
 		}
 		else {
 			throw new Exception();

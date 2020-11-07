@@ -19,7 +19,7 @@ public class Transfer {
 	    this.accountFrom = accountFrom;
 	    this.accountTo = accountTo;
 	    this.amount = amount;
-	}
+	} 
 
 	public int getTransferId() {
 		return transferId;

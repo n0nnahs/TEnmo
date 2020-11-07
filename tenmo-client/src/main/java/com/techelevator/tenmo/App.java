@@ -118,12 +118,13 @@ public class App {
 	}
 
 	private void sendBucks() throws AccountServiceException, TransferServiceException {
+		transferDto.setTransferTypeId(2);
 		boolean goodInput = false;
 		while (!goodInput) {
 		Account[] theAccounts = transferService.viewAvailableAccounts();
 		System.out.println("-------------------------------------------");
 		System.out.println("Available account ID's for transfer: \n");
-		System.out.println("Users   Username");
+		System.out.println("Users      Username");
 		System.out.println("   ID"); 
 		System.out.println("-------------------------------------------");
 		System.out.println();

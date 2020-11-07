@@ -57,7 +57,7 @@ public class AccountSqlDAO implements AccountDAO {
 			return null;
 		}
 		
-	}
+	} 
 	
 	@Override
 	public Account getAccountByUsername(String username) {
