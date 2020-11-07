@@ -100,8 +100,10 @@ public class App {
 
 	}
 
-	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
+	private void viewPendingRequests() throws TransferServiceException {
+		Transfer[] pending = transferService.viewPendingTransfers();
+		System.out.println("Pending transactions: \n");
+		System.out.println(pending.toString());
 
 	}
 

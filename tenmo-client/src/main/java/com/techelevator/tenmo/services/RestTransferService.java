@@ -1,6 +1,8 @@
 package com.techelevator.tenmo.services;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.HttpEntity;
@@ -44,18 +46,27 @@ public class RestTransferService {
 					Transfer.class);
 			System.out.println("Approved");
 		} catch (RestClientResponseException ex) {
-			throw new TransferServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString()+ "Insufficient funds");
+			throw new TransferServiceException(
+					ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString() + "Insufficient funds");
 		} catch (ResourceAccessException ex) {
 			throw new TransferServiceException(ex.getMessage());
 		}
 	}
 
+	public Transfer[] viewPendingTransfers() {
+		Transfer[] pending = null;
+		restTemplate.exchange(BASE_URL + "transfers/pending", HttpMethod.GET, makeAuthEntity(), Transfer[].class);
+		return pending;
+
+	}
+
 	public Account[] viewAvailableAccounts() throws AccountServiceException {
-		Account[] accounts = null;
+		Account[] account = null;
 		try {
-			accounts = restTemplate.exchange(BASE_URL + "accounts", HttpMethod.GET, makeAuthEntity(), Account[].class)
+			account = restTemplate.exchange(BASE_URL + "accounts", HttpMethod.GET, makeAuthEntity(), Account[].class)
 					.getBody();
-			return accounts;
+			return account;
+
 		} catch (RestClientResponseException ex) {
 			throw new AccountServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
 		} catch (ResourceAccessException ex) {
