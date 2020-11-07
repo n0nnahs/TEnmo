@@ -60,9 +60,9 @@ public class TransfersSqlDAO implements TransfersDAO {
 		while(results.next()) {
 			Transfer transferResult = mapRowToTransfer(results);
 			pending.add(transferResult);
-		}
+		} 
 		return pending;
-	}
+	} 
 	
 	@Override
 	public List<Transfer> getTransferByID(int transferId) {

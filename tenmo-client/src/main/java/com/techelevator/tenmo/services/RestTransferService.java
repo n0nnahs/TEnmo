@@ -42,7 +42,7 @@ public class RestTransferService {
 		Transfer confirmation = null;
 		try {
 			confirmation = restTemplate.exchange(BASE_URL + "transfers", HttpMethod.POST, makeAuthTransferDTO(transferDto), Transfer.class).getBody();
-			System.out.println("Approved");
+			
 			return confirmation;
 		} catch (RestClientResponseException ex) {
 			throw new TransferServiceException(

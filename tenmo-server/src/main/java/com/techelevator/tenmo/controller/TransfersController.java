@@ -49,7 +49,7 @@ public class TransfersController {
 	
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
-	public List<Transfer> transfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) throws Exception{
+	public Transfer transfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) throws Exception{
 		//uses the principal to get username, and then uses the username to get the account and then gets the account ID from the username
 		int fromAccount = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
 		
@@ -63,7 +63,7 @@ public class TransfersController {
 		Double fromAccountBalance = accountDAO.getAccountById(fromAccount).getBalance();
 		Double newFromAccountBalance = fromAccountBalance - transfer.getAmount();
 
-
+ 
 		if(newFromAccountBalance >= 0) {
 			//writes the transfer to the DB
 			int id = transferDAO.newTransfer(transfer);
@@ -77,11 +77,11 @@ public class TransfersController {
 			accountDAO.updateBalance(newToAccountBalance, transfer.getAccountTo());
 			
 			//returns transfer ID for confirmation
-			return transferDAO.getTransferByID(id);
+			return transferDAO.getTransferByID(id).get(0);
 		}
 		else {
 			throw new Exception();
 		}
-	
+	 
 	}
 }

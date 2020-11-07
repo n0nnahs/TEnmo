@@ -139,7 +139,13 @@ public class App {
 			} catch (Exception e) {
 				e.getMessage();
 			}
-			transferService.sendTransfer(transferDto);
+			Transfer transfer = transferService.sendTransfer(transferDto);
+			System.out.println();
+			System.out.println("\n *************************");
+			System.out.println("\n Transfer Details");
+			System.out.println("\n *************************");
+			System.out.println("Approved");
+			System.out.println(transfer.toString());
 			
 		}
 
