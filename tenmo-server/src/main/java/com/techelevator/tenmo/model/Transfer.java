@@ -8,6 +8,7 @@ public class Transfer {
 	private int accountTo;
 	private double amount;
 	
+	
 	public Transfer() {
 		
 	}
@@ -67,16 +68,5 @@ public class Transfer {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	@Override
-	public String toString() {
-		return "\n *************************"+
-			   "\n Transfer Details" +
-			   "\n *************************" +
-			   "\n TransferId: " + transferId +
-			   "\n TransferType: " + transferType +
-			   "\n StatusId: " + statusId +
-			   "\n AccountFrom: " + accountFrom +
-			   "\n AccountTo: " + accountTo +
-			   "\n Amount: " + amount;
-	}
+	
 }

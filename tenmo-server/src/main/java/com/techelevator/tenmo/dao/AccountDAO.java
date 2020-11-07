@@ -7,10 +7,12 @@ public interface AccountDAO {
 	
 	List<Account> list();
 				
-	Double updateBalance(int id, int amount);
+	Double updateBalance(Double newBalance, int id);
 
 	Account getAccountById(int id);
 	
 	Account getAccountByUsername(String username);
+	
+	public void save(Account newAccount);
 	
 }

@@ -32,6 +32,8 @@ public class RestAccountService {
 					HttpMethod.GET, makeAuthEntity(), Double.class).getBody();
 		} catch (RestClientResponseException ex) {
 			throw new AccountServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
+		} catch (ResourceAccessException ex) {
+			throw new AccountServiceException(ex.getMessage());
 		}
 		return balance;
 	}
@@ -39,10 +41,11 @@ public class RestAccountService {
 	public Double getAccountBalance() throws AccountServiceException {
 		Double balance = null;
 		try {
-			balance = restTemplate
-					.exchange(BASE_URL + "accounts/balance", HttpMethod.GET, makeAuthEntity(), Double.class).getBody();
+			balance = restTemplate.exchange(BASE_URL + "accounts/balance", HttpMethod.GET, makeAuthEntity(), Double.class).getBody();
 		} catch (RestClientResponseException ex) {
 			throw new AccountServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
+		} catch (ResourceAccessException ex) {
+			throw new AccountServiceException(ex.getMessage());
 		}
 		return balance;
 	}
@@ -53,6 +56,8 @@ public class RestAccountService {
 			users = restTemplate.exchange(BASE_URL + "users", HttpMethod.GET, makeAuthEntity(), User[].class).getBody();
 		} catch (RestClientResponseException ex) {
 			throw new AccountServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
+		} catch (ResourceAccessException ex) {
+			throw new AccountServiceException(ex.getMessage());
 		}
 		return users;
 	}
