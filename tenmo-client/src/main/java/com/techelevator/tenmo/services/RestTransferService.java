@@ -53,9 +53,11 @@ public class RestTransferService {
 		}
 	}
 
-	public Transfer[] viewPendingTransfers() {
+	public Transfer[] viewPendingTransfers() throws TransferServiceException {
 		Transfer[] pending = null;
-		restTemplate.exchange(BASE_URL + "transfers/pending", HttpMethod.GET, makeAuthEntity(), Transfer[].class);
+		
+		pending = restTemplate.exchange(BASE_URL + "transfers/pending", HttpMethod.GET, makeAuthEntity(), Transfer[].class).getBody();
+	
 		return pending;
 
 	}

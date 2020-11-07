@@ -94,17 +94,27 @@ public class App {
 			System.out.println("\n *************************");
 			System.out.println("\n Transfer Details");
 			System.out.println("\n *************************");
+			
 			for (Transfer t : transfers) {
-			System.out.println(t.toString());
-		}
+				System.out.println(t.toString());
+			}
 
 	}
 
 	private void viewPendingRequests() throws TransferServiceException {
 		Transfer[] pending = transferService.viewPendingTransfers();
-		System.out.println("Pending transactions: \n");
-		System.out.println(pending.toString());
-
+		if(pending.length == 0) {
+			System.out.println("There are no pending transactions");
+		}
+		else
+			System.out.println("Pending transactions: \n");
+			System.out.println("\n ***************************");
+			System.out.println("\n  Pending Transfer Details");
+			System.out.println("\n ***************************");
+			
+			for(Transfer p : pending) {
+				System.out.println(p.toString());	
+		}
 	}
 
 	private void sendBucks() throws AccountServiceException, TransferServiceException {
