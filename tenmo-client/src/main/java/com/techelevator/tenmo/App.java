@@ -91,8 +91,10 @@ public class App {
 			System.out.println("There are no transactions for this user");
 		} else
 			System.out.println("Your transfer history: \n");
-		for (Transfer t : transfers) {
-
+			System.out.println("\n *************************");
+			System.out.println("\n Transfer Details");
+			System.out.println("\n *************************");
+			for (Transfer t : transfers) {
 			System.out.println(t.toString());
 		}
 
@@ -107,15 +109,17 @@ public class App {
 		boolean goodInput = false;
 		while (!goodInput) {
 		Account[] theAccounts = transferService.viewAvailableAccounts();
+		System.out.println("-------------------------------------------");
 		System.out.println("Available account ID's for transfer: \n");
 		System.out.println("Users   Username");
 		System.out.println("   ID"); 
+		System.out.println("-------------------------------------------");
 		System.out.println();
 		for (Account account : theAccounts) {
 			System.out.println("(" + account.getAccountId() + ")      " + account.getUsername());
 		}
+		System.out.println("----------------------");
 		transferDto.setTransferToId(console.getUserInputInteger("\nPlease enter the account ID to transfer to"));
-
 			try {
 				transferDto.setAmount(console.getUserInputDouble("Please enter the amount you would like to send"));
 				goodInput = true;
