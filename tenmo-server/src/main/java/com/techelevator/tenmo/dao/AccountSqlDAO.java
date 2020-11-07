@@ -34,7 +34,8 @@ public class AccountSqlDAO implements AccountDAO {
 		List<Account> accounts = new ArrayList<>();
 		String sql = "SELECT user_id, account_id, username, balance "
 				   + "FROM accounts "
-				   + "JOIN users USING(user_id)";
+				   + "JOIN users USING(user_id)"
+				   + "ORDER BY user_id";
 				
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 		while(results.next()) {

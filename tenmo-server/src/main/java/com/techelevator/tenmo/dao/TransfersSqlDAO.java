@@ -62,7 +62,7 @@ public class TransfersSqlDAO implements TransfersDAO {
 			pending.add(transferResult);
 		} 
 		return pending;
-	} 
+	}  
 	
 	@Override
 	public List<Transfer> getTransferByID(int transferId) {
