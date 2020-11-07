@@ -108,8 +108,11 @@ public class App {
 		while (!goodInput) {
 		Account[] theAccounts = transferService.viewAvailableAccounts();
 		System.out.println("Available account ID's for transfer: \n");
+		System.out.println("Users   Username");
+		System.out.println("   ID"); 
+		System.out.println();
 		for (Account account : theAccounts) {
-			System.out.println(" Account ID (" + account.getAccountId() + ")  " + account.getUsername());
+			System.out.println("(" + account.getAccountId() + ")      " + account.getUsername());
 		}
 		transferDto.setTransferToId(console.getUserInputInteger("\nPlease enter the account ID to transfer to"));
 
