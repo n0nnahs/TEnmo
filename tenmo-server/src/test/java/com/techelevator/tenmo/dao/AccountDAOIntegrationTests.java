@@ -118,11 +118,7 @@ public class AccountDAOIntegrationTests {
 		 assertEquals(before + 100, after);
 	
 	}
-	private User getUser(String username) {
-		User theUser = new User();
-		theUser.setUsername(username);
-		return theUser;
-	}
+	
 	private Account getAccount(Double balance, int userId) {
 		Account theAccount = new Account();
 		theAccount.setUserId(userId);
