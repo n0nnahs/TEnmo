@@ -100,26 +100,32 @@ public class AccountDAOIntegrationTests {
 		}
 	
 	@Test
-	public void returns_Account_From_Username_Search() {
-		
-		Account theAccount = getAccount(1000.00, 1);
-		dao.save(theAccount);
-		Account results = dao.getAccountByUsername("user1");
-		assertAccountsAreEqual(theAccount, results);
+	public void returns_Account_From_Username() {
+		String extraTestUserSql = "INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)";
+		jdbc.update(extraTestUserSql, 3, "user3", "password");
+		String extraTestAccountSql = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
+		jdbc.update(extraTestAccountSql, 3, 3, 1000.00);
+		Account results = dao.getAccountByUsername("user3");
+		assertEquals(3, results.getAccountId());
 		
 	}
 	@Test
  	public void updateBalance_updates_account_balance() {
-		//String testBalanceSql = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
-		//jdbc.update(testBalanceSql, 1, 1, 0.00);
+//		String extraTestUserSql = "INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)";
+//		jdbc.update(extraTestUserSql, 3, "user3", "password");
+//		String testBalanceSql = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
+//		jdbc.update(testBalanceSql, 3, 3, 1000.00);
+		
 		Account theBalance = new Account();
 		theBalance.setBalance(1000.00);
 		theBalance.setAccountId(1);
 		theBalance.setUserId(1);
 		dao.save(theBalance);
- 		 Double before = theBalance.getBalance();		 
+ 		 Double before = theBalance.getBalance();
+ 		 System.out.println(before);
 		 Double after = dao.updateBalance(theBalance.getBalance()+100.00, theBalance.getAccountId());
- 		
+		 
+ 		System.out.println(dao.updateBalance(theBalance.getBalance(), theBalance.getAccountId()));
 		 assertEquals(before+100.00, after);
  	
  	}
