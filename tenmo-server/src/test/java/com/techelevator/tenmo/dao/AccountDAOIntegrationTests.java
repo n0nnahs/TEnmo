@@ -110,7 +110,9 @@ public class AccountDAOIntegrationTests {
 	}
 	@Test
  	public void updateBalance_updates_account_balance() {
- 		Account theBalance = new Account();
+		//String testBalanceSql = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
+		//jdbc.update(testBalanceSql, 1, 1, 0.00);
+		Account theBalance = new Account();
 		theBalance.setBalance(1000.00);
 		theBalance.setAccountId(1);
 		theBalance.setUserId(1);
