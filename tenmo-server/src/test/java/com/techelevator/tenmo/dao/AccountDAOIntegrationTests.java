@@ -89,12 +89,12 @@ public class AccountDAOIntegrationTests {
 
 	@Test
 	public void list_returns_list_of_accounts() {
-		List<Account> listAccounts = dao.list();
+		List<Account> listAccounts = dao.list(1);
 		String extraTestUserSql = "INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)";
 		jdbc.update(extraTestUserSql, 3, "user3", "password");
 		String extraTestAccountSql = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
 		jdbc.update(extraTestAccountSql, 3, 3, 1000.00);
-		List<Account> listAccountsPlusTest = dao.list();
+		List<Account> listAccountsPlusTest = dao.list(1);
 		
 		assertEquals(listAccounts.size() + 1, listAccountsPlusTest.size());
 		}
@@ -111,11 +111,15 @@ public class AccountDAOIntegrationTests {
 	@Test
 	public void updateBalance_updates_account_balance() {
 		Account theBalance = new Account();
+		theBalance.setBalance(1000.00);
+		theBalance.setAccountId(1);
+		theBalance.setUserId(1);
+		dao.save(theBalance);
 		 Double before = theBalance.getBalance();
-		 dao.updateBalance(100.00, theBalance.getAccountId());
-		 Double after = theBalance.getBalance();
+		 
+		 Double after = dao.updateBalance(theBalance.getBalance()+100.00, theBalance.getAccountId());
 		
-		 assertEquals(before + 100, after);
+		 assertEquals(before+100, after);
 	
 	}
 	
