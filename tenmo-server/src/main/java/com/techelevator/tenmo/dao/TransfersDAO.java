@@ -10,6 +10,7 @@ public interface TransfersDAO {
 	
 	List<Transfer> listPendingTransfers(int accountId);
 	
-	void newTransfer(Transfer transfer); 
+	int newTransfer(Transfer transfer); 
 	
+	List<Transfer> getTransferByID(int transferId);
 }

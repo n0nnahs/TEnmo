@@ -30,18 +30,19 @@ public class AccountSqlDAO implements AccountDAO {
 	}
 
 	@Override
-	public List<Account> list() {
+	public List<Account> list(int id) {
 		List<Account> accounts = new ArrayList<>();
 		String sql = "SELECT user_id, account_id, username, balance "
 				   + "FROM accounts "
-				   + "JOIN users USING(user_id)";
+				   + "JOIN users USING(user_id)"
+				   + "WHERE user_id != ?"
+				   + "ORDER BY user_id";
 				
-		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
 		while(results.next()) {
 			Account accountResult = mapRowToAccount(results);
 			accounts.add(accountResult);
 		}
-		
 		return accounts;
 	} 
 
@@ -57,7 +58,7 @@ public class AccountSqlDAO implements AccountDAO {
 			return null;
 		}
 		
-	}
+	} 
 	
 	@Override
 	public Account getAccountByUsername(String username) {

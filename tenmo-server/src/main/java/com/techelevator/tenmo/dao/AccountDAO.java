@@ -5,7 +5,7 @@ import com.techelevator.tenmo.model.Account;
 
 public interface AccountDAO {
 	
-	List<Account> list();
+	List<Account> list(int id);
 				
 	Double updateBalance(Double newBalance, int id);
 
