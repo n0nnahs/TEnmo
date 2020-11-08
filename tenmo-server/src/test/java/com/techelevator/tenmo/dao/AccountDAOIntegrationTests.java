@@ -26,6 +26,7 @@ public class AccountDAOIntegrationTests {
 	private static SingleConnectionDataSource dataSource;
 	private AccountSqlDAO dao;
 	private UserSqlDAO userDAO;
+	private JdbcTemplate jdbc;
 
 	
 	@BeforeClass
@@ -45,28 +46,34 @@ public class AccountDAOIntegrationTests {
 	
 	@Before
 	public void setup() {
-		String sqlTestUser = "INSERT INTO users (user_id, username, password_hash) values(?, 'test','$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC')";
-		//String sqlInsertAccount = "INSERT INTO accounts (account_id, user_id, balance) VALUES (999, 999, 1000)";
 		dao = new AccountSqlDAO(dataSource);
-		JdbcTemplate jdbc = new JdbcTemplate(dataSource);
-		jdbc.update(sqlTestUser, 999);
+		jdbc = new JdbcTemplate(dataSource);
 		userDAO = new UserSqlDAO(jdbc);
+		
+		String deleteTables = "TRUNCATE TABLE accounts, transfers, users";
+		jdbc.update(deleteTables);
+		
+		String insertTestUser = "INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)";
+		jdbc.update(insertTestUser, 1, "user1", "password");
+		jdbc.update(insertTestUser, 2, "user2", "password");
+		
+		String insertTestAccount = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
+		jdbc.update(insertTestAccount, 1, 1, 1000.00);
+		jdbc.update(insertTestAccount, 2, 2, 1000.00);
+		
+		String insertTestTransfer = "INSERT INTO transfers (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+		"VALUES (DEFAULT, ?, ?, ?, ?, ?)";
+		jdbc.update(insertTestTransfer, 2, 2, 1, 2, 100.00);
+		jdbc.update(insertTestTransfer, 2, 2, 2, 1, 200.00);
+		jdbc.update(insertTestTransfer, 2, 1, 1, 2, 100.00);
+		
 	}
 	
 	@After
 	public void rollback() throws SQLException {
 		dataSource.getConnection().rollback();
 	}
-	@Test
-	public void updateBalance_updates_account_balance() {
-		 
-		userDAO.create("test", "$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC");
-		Account updateBalance = new Account();
-		 updateBalance.setBalance(100.00);
-		 
-		 assertEquals(updateBalance.getBalance()+100, updateBalance.getBalance());
 	
-	}
 	@Test
 	public void findAll_returns_all_users() {
 	
@@ -78,24 +85,15 @@ public class AccountDAOIntegrationTests {
 		Assert.assertEquals(allUsers.size() + 1, allUsersPlusTest.size());
 		
 	}
-	
-	//not working yet
-	@Test	
-	public void returns_User_From_Username_Search() {
-		boolean testUser = userDAO.create("test", "$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC");
-		User results = userDAO.findByUsername(testUser.getUsername());
 		
-		assertEquals(testUser, results);
-		
-		
-		
-	}
+
 	@Test
 	public void list_returns_list_of_accounts() {
 		List<Account> listAccounts = dao.list();
-		
-		Account theAccount = getAccount(1000.00, 999);
-		dao.save(theAccount);
+		String extraTestUserSql = "INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)";
+		jdbc.update(extraTestUserSql, 3, "user3", "password");
+		String extraTestAccountSql = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
+		jdbc.update(extraTestAccountSql, 3, 3, 1000.00);
 		List<Account> listAccountsPlusTest = dao.list();
 		
 		assertEquals(listAccounts.size() + 1, listAccountsPlusTest.size());
@@ -104,11 +102,21 @@ public class AccountDAOIntegrationTests {
 	@Test
 	public void returns_Account_From_Username_Search() {
 		
-		Account theAccount = getAccount(1000.00, 999);
+		Account theAccount = getAccount(1000.00, 1);
 		dao.save(theAccount);
-		Account results = dao.getAccountByUsername("test");
+		Account results = dao.getAccountByUsername("user1");
 		assertAccountsAreEqual(theAccount, results);
 		
+	}
+	@Test
+	public void updateBalance_updates_account_balance() {
+		Account theBalance = new Account();
+		 Double before = theBalance.getBalance();
+		 dao.updateBalance(100.00, theBalance.getAccountId());
+		 Double after = theBalance.getBalance();
+		
+		 assertEquals(before + 100, after);
+	
 	}
 	private User getUser(String username) {
 		User theUser = new User();
