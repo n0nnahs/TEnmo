@@ -5,7 +5,7 @@ public class TransferDTO {
 	//int transferId;
 	//I was getting an error because it was defaulting this to 0 when it was sending to the server side since it doesn't get set anywhere 
 	//before being sent to server. 
-	
+	String fromUserName;
 	int transferStatusId;
 	int transferToId;
 	int transferTypeId;
@@ -46,5 +46,11 @@ public class TransferDTO {
 	}
 	public void setTransferTypeId(int transferTypeId) {
 		this.transferTypeId = transferTypeId;
+	}
+	public String getUsername() {
+		return fromUserName;
+	}
+	public void setUserName(String userName) {
+		this.fromUserName =  userName;
 	}
 }

@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.models;
 
 public class Transfer {
+	String toUser;
 	private int transferId;
 	private int transferType;
 	private int statusId;
@@ -18,6 +19,12 @@ public class Transfer {
 	      this.accountFrom = accountFrom;
 	      this.accountTo = accountTo;
 	      this.amount = amount;
+	}
+	public String getToUser() {
+		return toUser;
+	}
+	public void setToUser(String userName) {
+		this.toUser = userName;
 	}
 
 	public int getTransferId() {
