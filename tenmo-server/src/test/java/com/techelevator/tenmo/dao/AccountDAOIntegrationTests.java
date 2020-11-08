@@ -109,19 +109,18 @@ public class AccountDAOIntegrationTests {
 		
 	}
 	@Test
-	public void updateBalance_updates_account_balance() {
-		Account theBalance = new Account();
+ 	public void updateBalance_updates_account_balance() {
+ 		Account theBalance = new Account();
 		theBalance.setBalance(1000.00);
 		theBalance.setAccountId(1);
 		theBalance.setUserId(1);
 		dao.save(theBalance);
-		 Double before = theBalance.getBalance();
-		 
+ 		 Double before = theBalance.getBalance();		 
 		 Double after = dao.updateBalance(theBalance.getBalance()+100.00, theBalance.getAccountId());
-		
-		 assertEquals(before+100, after);
-	
-	}
+ 		
+		 assertEquals(before+100.00, after);
+ 	
+ 	}
 	
 	private Account getAccount(Double balance, int userId) {
 		Account theAccount = new Account();
