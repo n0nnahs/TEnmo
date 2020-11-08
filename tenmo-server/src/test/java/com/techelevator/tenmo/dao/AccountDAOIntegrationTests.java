@@ -123,9 +123,9 @@ public class AccountDAOIntegrationTests {
 		dao.save(theBalance);
  		 Double before = theBalance.getBalance();
  		 System.out.println(before);
-		 Double after = dao.updateBalance(theBalance.getBalance()+100.00, theBalance.getAccountId());
-		 
- 		System.out.println(dao.updateBalance(theBalance.getBalance(), theBalance.getAccountId()));
+		 dao.updateBalance(theBalance.getBalance()+100.00, theBalance.getAccountId());
+		 Double after = theBalance.getBalance();
+ 		System.out.println(after);
 		 assertEquals(before+100.00, after);
  	
  	}
