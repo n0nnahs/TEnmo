@@ -40,10 +40,10 @@ public class TransfersSqlDAO implements TransfersDAO {
 	@Override
 	public int newTransfer(Transfer transfer) {
 		String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount)"
-				   + "VALUES	  			(?, 			   2, 				   ?, 			 ?, 		 ?)"
+				   + "VALUES	  			(?, 			   ?, 				   ?, 			 ?, 		 ?)"
 				   + "RETURNING transfer_id";
 	
-		 Long transferIdLong = jdbcTemplate.queryForObject(sql, Long.class, transfer.getTransferType(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+		 Long transferIdLong = jdbcTemplate.queryForObject(sql, Long.class, transfer.getTransferType(), transfer.getStatusId(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
 		 int transferId = transferIdLong.intValue();
 		 return transferId;
 	}

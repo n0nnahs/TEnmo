@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.techelevator.tenmo.dao.AccountDAO;
 import com.techelevator.tenmo.dao.TransfersDAO;
+import com.techelevator.tenmo.model.InsufficientFundsException;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.TransferDTO;
 
@@ -59,29 +60,34 @@ public class TransfersController {
 		transfer.setAccountTo(transferDTO.getTransferToId());
 		transfer.setAccountFrom(fromAccount);
 		transfer.setTransferType(transferDTO.getTransferTypeId());
+		transfer.setStatusId(transferDTO.getTransferStatusId());
 		
 		Double fromAccountBalance = accountDAO.getAccountById(fromAccount).getBalance();
 		Double newFromAccountBalance = fromAccountBalance - transfer.getAmount();
 
- 
-		if(newFromAccountBalance >= 0) {
-			//writes the transfer to the DB
-			int id = transferDAO.newTransfer(transfer);
-		
-			//update balance in fromaccount to subtract amount
-			accountDAO.updateBalance(newFromAccountBalance, transfer.getAccountFrom());
-
-			//add amount to toaccount
-			Double newToAccountBalance = accountDAO.getAccountById(transfer.getAccountTo()).getBalance() + transfer.getAmount();
-			//update balance in toaccount add amount
-			accountDAO.updateBalance(newToAccountBalance, transfer.getAccountTo());
+		if(transfer.getTransferType() == 2) {
+			if(newFromAccountBalance >= 0) {
+				//writes the transfer to the DB
+				int id = transferDAO.newTransfer(transfer);
 			
-			//returns transfer ID for confirmation
-			return transferDAO.getTransferByID(id).get(0);
+				//update balance in fromaccount to subtract amount
+				accountDAO.updateBalance(newFromAccountBalance, transfer.getAccountFrom());
+	
+				//add amount to toaccount
+				Double newToAccountBalance = accountDAO.getAccountById(transfer.getAccountTo()).getBalance() + transfer.getAmount();
+				//update balance in toaccount add amount
+				accountDAO.updateBalance(newToAccountBalance, transfer.getAccountTo());
+				
+				//returns transfer ID for confirmation
+				return transferDAO.getTransferByID(id).get(0);
+			}
+			else {
+				throw new InsufficientFundsException();
+			}
 		}
 		else {
-			throw new Exception();
+			int id = transferDAO.newTransfer(transfer);
+			return transferDAO.getTransferByID(id).get(0);
 		}
-	 
 	}
 }

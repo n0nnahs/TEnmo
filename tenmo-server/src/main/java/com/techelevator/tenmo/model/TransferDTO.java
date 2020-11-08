@@ -14,6 +14,9 @@ public class TransferDTO {
 	@NotNull
 	int transferTypeId;
 	
+	@NotNull
+	int transferStatusId;
+	
 	public int getTransferToId() {
 		return transferToId;
 	}
@@ -33,4 +36,14 @@ public class TransferDTO {
 	public void setTransferTypeId(int transferTypeId) {
 		this.transferTypeId = transferTypeId;
 	}
+
+	public int getTransferStatusId() {
+		return transferStatusId;
+	}
+
+	public void setTransferStatusId(int transferStatusId) {
+		this.transferStatusId = transferStatusId;
+	}
+
+
 }

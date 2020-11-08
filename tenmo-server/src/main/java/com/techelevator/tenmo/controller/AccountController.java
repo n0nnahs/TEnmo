@@ -24,8 +24,8 @@ public class AccountController {
 	}
 	
 	@RequestMapping(path = "/accounts", method = RequestMethod.GET)
-	public List<Account> list(){
-		return accountDAO.list();
+	public List<Account> list(Principal principal){
+		return accountDAO.list(accountDAO.getAccountByUsername(principal.getName()).getAccountId());
 	}
 	
 	@RequestMapping(path = "/accounts/{id}", method = RequestMethod.GET)
