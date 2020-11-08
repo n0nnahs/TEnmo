@@ -46,7 +46,21 @@ public class RestTransferService {
 			return confirmation;
 		} catch (RestClientResponseException ex) {
 			throw new TransferServiceException(
-					ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString() + "Insufficient funds");
+					ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
+		} catch (ResourceAccessException ex) {
+			throw new TransferServiceException(ex.getMessage());
+		}
+	}
+	
+	public Transfer requestTransfer(TransferDTO transferDTO) throws TransferServiceException {
+		Transfer confirmation = null;
+		try {
+			confirmation = restTemplate.exchange(BASE_URL + "transfers/request", HttpMethod.POST, makeAuthTransferDTO(transferDTO), Transfer.class).getBody();
+			
+			return confirmation;
+		} catch (RestClientResponseException ex) {
+			throw new TransferServiceException(
+					ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
 		} catch (ResourceAccessException ex) {
 			throw new TransferServiceException(ex.getMessage());
 		}

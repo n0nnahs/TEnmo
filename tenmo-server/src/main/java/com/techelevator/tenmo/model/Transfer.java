@@ -18,19 +18,8 @@ public class Transfer {
 	private double amount;
 	
 	
-	public Transfer() {
-		
+	public Transfer() {	
 	}
-//	public Transfer(TransferDTO transferDTO, Principal principal) {
-//		this.accountTo = transferDTO.getTransferToId();
-//		this.toUsername = (adao.getAccountById(accountTo)).getUsername();
-//		this.fromUsername = principal.getName();
-//		this.accountFrom = (adao.getAccountByUsername(fromUsername)).getAccountId();
-//		this.amount = transferDTO.getAmount();
-//		this.transferType = transferDTO.getTransferTypeId();
-//		this.statusId = transferDTO.getTransferStatusId();
-//	}
-	
 	
 	public Transfer(int transferType, String typeName, int statusId, String statusName, int accountFrom, String fromUsername, int accountTo, String toUsername, double amount) {
 	    this.statusId = statusId;

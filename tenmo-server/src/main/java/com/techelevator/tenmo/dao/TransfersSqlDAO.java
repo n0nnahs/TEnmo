@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.dao;
-
+ 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.TransferDTO;
 
 @Component
 public class TransfersSqlDAO implements TransfersDAO {
@@ -42,12 +44,12 @@ public class TransfersSqlDAO implements TransfersDAO {
 	}
 
 	@Override
-	public int newTransfer(Transfer transfer) {
+	public int newTransfer(TransferDTO transferDTO) {
 		String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount)"
 				   + "VALUES	  			(?, 			   ?, 				   ?, 			 ?, 		 ?)"
 				   + "RETURNING transfer_id";
 	
-		 Long transferIdLong = jdbcTemplate.queryForObject(sql, Long.class, transfer.getTransferType(), transfer.getStatusId(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+		 Long transferIdLong = jdbcTemplate.queryForObject(sql, Long.class, transferDTO.getTransferTypeId(), transferDTO.getTransferStatusId(), transferDTO.getTransferFromId(), transferDTO.getTransferToId(), transferDTO.getAmount());
 		 int transferId = transferIdLong.intValue();
 		 return transferId;
 	}
@@ -94,6 +96,12 @@ public class TransfersSqlDAO implements TransfersDAO {
 		}
 		return transfer;
 		
+	}
+	
+	@Override
+	public void updateRequest(TransferDTO transfer) {
+		String sql = "UPDATE transfers SET transfer_status_id = ? WHERE transfer_id = ? ";
+		jdbcTemplate.update(sql, transfer.getTransferStatusId(), transfer.getTransferId());
 	}
 	
 	private Transfer mapRowToTransfer(SqlRowSet results) {

@@ -2,15 +2,30 @@ package com.techelevator.tenmo.models;
 
 public class TransferDTO {
 	
-	//int transferId;
-	//I was getting an error because it was defaulting this to 0 when it was sending to the server side since it doesn't get set anywhere 
-	//before being sent to server. 
+
 	String fromUserName;
 	int transferStatusId;
 	int transferToId;
 	int transferTypeId;
 	Double amount;
+	int transferFromId;
 	
+	public String getFromUserName() {
+		return fromUserName;
+	}
+
+	public int getTransferFromId() {
+		return transferFromId;
+	}
+
+	public void setFromUserName(String fromUserName) {
+		this.fromUserName = fromUserName;
+	}
+
+	public void setTransferFromId(int transferFromId) {
+		this.transferFromId = transferFromId;
+	}
+
 	public int getTransferStatusId() {
 		return transferStatusId;
 	}
@@ -23,13 +38,6 @@ public class TransferDTO {
 		return transferToId;
 	}
 	
-//	public int getTransferId() {
-//		return transferId;
-//	}
-//
-//	public void setTransferId(int transferId) {
-//		this.transferId = transferId;
-//	}
 
 	public void setTransferToId(int transferToId) {
 		this.transferToId = transferToId;
@@ -53,4 +61,5 @@ public class TransferDTO {
 	public void setUserName(String userName) {
 		this.fromUserName =  userName;
 	}
+
 }

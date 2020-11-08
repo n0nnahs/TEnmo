@@ -35,7 +35,7 @@ public class TransferDAOIntegrationTests {
 		dataSource.setPassword("postgres1");
 		dataSource.setAutoCommit(false);
 		
-	}
+	} 
 	@AfterClass
 	public static void closeDataSource() throws SQLException {
 		dataSource.destroy();

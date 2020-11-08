@@ -175,14 +175,14 @@ public class App {
 			System.out.println("(" + account.getAccountId() + ")      " + account.getUsername());
 		}
 		System.out.println("----------------------");
-		transferDto.setTransferToId(console.getUserInputInteger("\nPlease enter the account ID to transfer to"));
+		transferDto.setTransferFromId(console.getUserInputInteger("\nPlease enter the account ID to transfer to"));
 			try {
 				transferDto.setAmount(console.getUserInputDouble("Please enter the amount you would like to request"));
 				goodInput = true;
 			} catch (Exception e) {
 				e.getMessage();
 			}
-			Transfer transfer = transferService.sendTransfer(transferDto);
+			Transfer transfer = transferService.requestTransfer(transferDto);
 			System.out.println();
 			System.out.println("\n *************************");
 			System.out.println("\n Transfer Details");
