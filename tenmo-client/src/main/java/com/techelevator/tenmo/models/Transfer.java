@@ -1,30 +1,60 @@
 package com.techelevator.tenmo.models;
 
 public class Transfer {
-	String toUser;
+
 	private int transferId;
 	private int transferType;
+	private String typeName;
 	private int statusId;
+	private String statusName;
 	private int accountFrom;
+	private String fromUsername;
 	private int accountTo;
+	private String toUsername;
 	private double amount;
-	
+
 	public Transfer() {
-		
+
 	}
-	
-	public Transfer(int transferId, int transferType, int statusId, int accountFrom, int accountTo, double amount) {
-		  this.transferId = transferId;
-	      this.statusId = statusId;
-	      this.accountFrom = accountFrom;
-	      this.accountTo = accountTo;
-	      this.amount = amount;
+
+	@Override
+	public String toString() {
+		return "\n ID: " + transferId +
+			   "\n Type: " + transferType + " " + typeName +
+			   "\n Status: " + statusId + " " + statusName +
+			   "\n From: " + accountFrom + " " + fromUsername + 
+			   "\n To: " + accountTo + " " + toUsername + 
+			   "\n Amount: "+ amount;
 	}
+
+	public Transfer(int transferId, int transferType, String typeName, int statusId, String statusName, int accountFrom,
+		String fromUsername, int accountTo, String toUsername, double amount) {
+		this.transferId = transferId;
+		this.transferType = transferType;
+		this.typeName = typeName;
+		this.statusId = statusId;
+		this.statusName = statusName;
+		this.accountFrom = accountFrom;
+		this.fromUsername = fromUsername;
+		this.accountTo = accountTo;
+		this.toUsername = toUsername;
+		this.amount = amount;
+	}
+
+//	public Transfer(String toUsername,int transferId, int transferType, int statusId, int accountFrom, int accountTo, double amount) {
+//		  this.toUsername = toUsername;
+//		  this.transferId = transferId;
+//	      this.statusId = statusId;
+//	      this.accountFrom = accountFrom;
+//	      this.accountTo = accountTo;
+//	      this.amount = amount;
+//	}
 	public String getToUser() {
-		return toUser;
+		return toUsername;
 	}
+
 	public void setToUser(String userName) {
-		this.toUser = userName;
+		this.toUsername = userName;
 	}
 
 	public int getTransferId() {
@@ -74,14 +104,37 @@ public class Transfer {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	@Override
-	public String toString() {
-		return 
-			   "\n ID: " + transferId +
-			   "\n Type: " + transferType +
-			   "\n Status: " + statusId +
-			   "\n From: " + accountFrom +
-			   "\n To: " + accountTo +
-			   "\n Amount: " + amount;
+
+	public String getTypeName() {
+		return typeName;
 	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
+
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
+	}
+
+	public String getFromUsername() {
+		return fromUsername;
+	}
+
+	public void setFromUsername(String fromUsername) {
+		this.fromUsername = fromUsername;
+	}
+
+	public String getToUsername() {
+		return toUsername;
+	}
+
+	public void setToUsername(String toUsername) {
+		this.toUsername = toUsername;
+	}
+
 }
