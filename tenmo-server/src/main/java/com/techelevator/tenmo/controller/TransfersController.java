@@ -58,7 +58,9 @@ public class TransfersController {
 		Transfer transfer = new Transfer();
 		transfer.setAmount(transferDTO.getAmount());
 		transfer.setAccountTo(transferDTO.getTransferToId());
+		transfer.setToUsername(accountDAO.getAccountById(transfer.getAccountTo()).getUsername());
 		transfer.setAccountFrom(fromAccount);
+		transfer.setFromUsername(principal.getName());
 		transfer.setTransferType(transferDTO.getTransferTypeId());
 		transfer.setStatusId(transferDTO.getTransferStatusId());
 		
