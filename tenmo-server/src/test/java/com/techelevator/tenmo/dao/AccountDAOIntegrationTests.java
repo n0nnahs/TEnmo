@@ -75,7 +75,7 @@ public class AccountDAOIntegrationTests {
 	}
 	
 	@Test
-	public void findAll_returns_all_users() {
+	public void findAll_returns_all_users_and_create_creates_user() {
 	
 		List<User> allUsers = userDAO.findAll();
 		
@@ -101,45 +101,21 @@ public class AccountDAOIntegrationTests {
 	
 	@Test
 	public void returns_Account_From_Username() {
-		String extraTestUserSql = "INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)";
-		jdbc.update(extraTestUserSql, 3, "user3", "password");
-		String extraTestAccountSql = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
-		jdbc.update(extraTestAccountSql, 3, 3, 1000.00);
-		Account results = dao.getAccountByUsername("user3");
-		assertEquals(3, results.getAccountId());
+		Account results = dao.getAccountByUsername("user1");
+		assertEquals(1, results.getAccountId());
 		
 	}
 	@Test
  	public void updateBalance_updates_account_balance() {
-//		String extraTestUserSql = "INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)";
-//		jdbc.update(extraTestUserSql, 3, "user3", "password");
-//		String testBalanceSql = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
-//		jdbc.update(testBalanceSql, 3, 3, 1000.00);
+
+		Account account = dao.getAccountById(userDAO.findIdByUsername("user1"));
 		
-		Account theBalance = new Account();
-		theBalance.setBalance(1000.00);
-		theBalance.setAccountId(1);
-		theBalance.setUserId(1);
-		dao.save(theBalance);
- 		 Double before = theBalance.getBalance();
- 		 System.out.println(before);
-		 dao.updateBalance(theBalance.getBalance()+100.00, theBalance.getAccountId());
-		 Double after = theBalance.getBalance();
- 		System.out.println(after);
-		 assertEquals(before+100.00, after);
- 	
+		Double before = account.getBalance();
+		
+		Double after = dao.updateBalance(account.getBalance()+100.00, account.getAccountId());
+		
+		assertEquals(before+100.00, after);
  	}
-	
-	private Account getAccount(Double balance, int userId) {
-		Account theAccount = new Account();
-		theAccount.setUserId(userId);
-		theAccount.setBalance(balance);
-		return theAccount;
-	}
-	private void assertAccountsAreEqual(Account expected, Account actual) {
-		assertEquals(expected.getAccountId(), actual.getAccountId());
-		assertEquals(expected.getUserId(), actual.getUserId());
-		assertEquals(expected.getBalance(), actual.getBalance());
-	}
+
 
 }
