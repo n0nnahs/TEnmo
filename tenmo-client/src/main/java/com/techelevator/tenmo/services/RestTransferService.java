@@ -74,6 +74,12 @@ public class RestTransferService {
 		return pending;
 
 	}
+	
+	public Transfer[] viewPendingRequests(int accountId) throws TransferServiceException {
+		Transfer[] pending = null;
+		pending = restTemplate.exchange(BASE_URL + "transfers/pending?transferRequest=" + accountId, HttpMethod.GET, makeAuthEntity(), Transfer[].class).getBody();
+		return pending;
+	}
 
 	public Account[] viewAvailableAccounts() throws AccountServiceException {
 		Account[] account = null;

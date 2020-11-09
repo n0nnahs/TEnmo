@@ -100,9 +100,6 @@ public class App {
 		}
 	}
 	
-	private void viewRequestTransfers() {
-		
-	}
 
 	private void viewCurrentBalance() throws AccountServiceException {
 		System.out.println("Your balance is: $" + accountService.getAccountBalance());
@@ -139,6 +136,22 @@ public class App {
 			for(Transfer p : pending) {
 				System.out.println(p.toString());	
 		}
+	}
+
+	private void viewRequestTransfers() throws TransferServiceException {
+		Transfer[] pending = transferService.viewPendingRequests(currentUser.getUser().getId());
+		if(pending.length == 0) {
+			System.out.println("There are no pending transfer requests");
+		}
+		else
+			System.out.println("Pending Requests: \n");
+			System.out.println("\n ***************************");
+			System.out.println("\n  Request Transfer Details");
+			System.out.println("\n ***************************");
+			
+			for(Transfer p : pending) {
+				System.out.println(p.toString());	
+		}	
 	}
 
 	private void sendBucks() throws AccountServiceException {

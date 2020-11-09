@@ -43,11 +43,14 @@ public class TransfersController {
 	}
 	
 	@RequestMapping(path = "/transfers/pending", method = RequestMethod.GET)
-	public List<Transfer> listPending(Principal principal){
-	int accountId = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
-	return transferDAO.listPendingTransfers(accountId);
+	public List<Transfer> listPending(Principal principal, @RequestParam(defaultValue = "")String transferRequest){
+		int accountId = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
+		if(transferRequest.equals("")) {
+			return transferDAO.listPendingTransfers(accountId);
+		}
+		else return transferDAO.listRequests(accountId);
 	}
-	
+
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.PUT)
 	public Transfer updateTransfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) {
