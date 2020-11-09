@@ -35,8 +35,9 @@ public class App {
 	
 	private static final String PENDING_REQUEST_MENU_VIEW_PENDING = "View your pending requests";
 	private static final String PENDING_REQUEST_MENU_VIEW_REQUEST_TRANSFERS = "View all of your Request Transfers";
+	private static final String PENDING_REQUEST_MENU_RECONCILE_REQUESTS = "Approve or Reject pending Request Transfers";
 	private static final String MAIN_MENU = "Go to main menu";
-	private static final String[] PENDING_REQUEST_MENU_OPTIONS = {PENDING_REQUEST_MENU_VIEW_PENDING, PENDING_REQUEST_MENU_VIEW_REQUEST_TRANSFERS, MAIN_MENU};
+	private static final String[] PENDING_REQUEST_MENU_OPTIONS = {PENDING_REQUEST_MENU_VIEW_PENDING, PENDING_REQUEST_MENU_VIEW_REQUEST_TRANSFERS, PENDING_REQUEST_MENU_RECONCILE_REQUESTS, MAIN_MENU};
 			
 	private AuthenticatedUser currentUser;
 	private ConsoleService console;
@@ -94,6 +95,9 @@ public class App {
 			else if(PENDING_REQUEST_MENU_VIEW_REQUEST_TRANSFERS.equals(choice)) {
 				viewRequestTransfers();
 			}
+			else if(PENDING_REQUEST_MENU_RECONCILE_REQUESTS.equals(choice)) {
+				reconcilePendingRequests();
+			}
 			else {
 				mainMenu();
 			}
@@ -135,6 +139,45 @@ public class App {
 			
 			for(Transfer p : pending) {
 				System.out.println(p.toString());	
+			}
+	}
+	
+	private void reconcilePendingRequests() throws TransferServiceException {
+		viewRequestTransfers();
+		
+		TransferDTO transferDto = new TransferDTO();
+		Transfer pendingTransfer;
+		boolean goodInput = false;
+		
+		while (!goodInput) {
+		
+			transferDto.setTransferId(console.getUserInputInteger("\nPlease enter the request ID to reconcile"));
+			pendingTransfer = transferService.getTransferById(transferDto.getTransferId());
+			
+			transferDto.setAmount(pendingTransfer.getAmount());
+			transferDto.setTransferToId(pendingTransfer.getAccountTo());
+			transferDto.setTransferFromId(pendingTransfer.getAccountFrom());
+			transferDto.setTransferTypeId(pendingTransfer.getTransferType());
+			
+			try {
+				int selection = console.getUserInputInteger("Please enter '1' to Approve or '2' to Reject request or '0' to return to menu. \n If approved, money will be deducted from your account immediately.");
+				
+				if(selection == 1) {
+					transferDto.setTransferStatusId(2);
+					transferService.reconcileTransfer(transferDto);
+					goodInput = true;
+					System.out.println("Request Closed");
+				}
+				else if(selection == 2) {
+					transferDto.setTransferStatusId(3);
+					transferService.reconcileTransfer(transferDto);
+					goodInput = true;
+					System.out.println("Request Closed");
+				}
+			}
+			catch (Exception e) {
+				System.out.println(e.toString());
+			}
 		}
 	}
 
@@ -151,7 +194,7 @@ public class App {
 			
 			for(Transfer p : pending) {
 				System.out.println(p.toString());	
-		}	
+			}	
 	}
 
 	private void sendBucks() throws AccountServiceException {
