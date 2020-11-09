@@ -22,6 +22,7 @@ public class App {
 	private static final String LOGIN_MENU_OPTION_LOGIN = "Login";
 	private static final String[] LOGIN_MENU_OPTIONS = { LOGIN_MENU_OPTION_REGISTER, LOGIN_MENU_OPTION_LOGIN,
 			MENU_OPTION_EXIT };
+	
 	private static final String MAIN_MENU_OPTION_VIEW_BALANCE = "View your current balance";
 	private static final String MAIN_MENU_OPTION_SEND_BUCKS = "Send TE bucks";
 	private static final String MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS = "View your past transfers";
@@ -31,7 +32,13 @@ public class App {
 	private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_VIEW_BALANCE, MAIN_MENU_OPTION_SEND_BUCKS,
 			MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS, MAIN_MENU_OPTION_REQUEST_BUCKS,
 			MAIN_MENU_OPTION_VIEW_PENDING_REQUESTS, MAIN_MENU_OPTION_LOGIN, MENU_OPTION_EXIT };
-
+	
+	private static final String PENDING_REQUEST_MENU_VIEW_PENDING = "View your pending requests";
+	private static final String PENDING_REQUEST_MENU_VIEW_REQUEST_TRANSFERS = "View all of your Request Transfers";
+	private static final String PENDING_REQUEST_MENU_RECONCILE_REQUESTS = "Approve or Reject pending Request Transfers";
+	private static final String MAIN_MENU = "Go to main menu";
+	private static final String[] PENDING_REQUEST_MENU_OPTIONS = {PENDING_REQUEST_MENU_VIEW_PENDING, PENDING_REQUEST_MENU_VIEW_REQUEST_TRANSFERS, PENDING_REQUEST_MENU_RECONCILE_REQUESTS, MAIN_MENU};
+			
 	private AuthenticatedUser currentUser;
 	private ConsoleService console;
 	private AuthenticationService authenticationService;
@@ -65,7 +72,7 @@ public class App {
 			} else if (MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS.equals(choice)) {
 				viewTransferHistory();
 			} else if (MAIN_MENU_OPTION_VIEW_PENDING_REQUESTS.equals(choice)) {
-				viewPendingRequests();
+				pendingMenu();
 			} else if (MAIN_MENU_OPTION_SEND_BUCKS.equals(choice)) {
 				sendBucks();
 			} else if (MAIN_MENU_OPTION_REQUEST_BUCKS.equals(choice)) {
@@ -78,6 +85,25 @@ public class App {
 			}
 		}
 	}
+
+	private void pendingMenu() throws AccountServiceException, TransferServiceException{
+		while(true) {
+			String choice =(String) console.getChoiceFromOptions(PENDING_REQUEST_MENU_OPTIONS);
+			if(PENDING_REQUEST_MENU_VIEW_PENDING.equals(choice)) {
+				viewPendingRequests();
+			}
+			else if(PENDING_REQUEST_MENU_VIEW_REQUEST_TRANSFERS.equals(choice)) {
+				viewRequestTransfers();
+			}
+			else if(PENDING_REQUEST_MENU_RECONCILE_REQUESTS.equals(choice)) {
+				reconcilePendingRequests();
+			}
+			else {
+				mainMenu();
+			}
+		}
+	}
+	
 
 	private void viewCurrentBalance() throws AccountServiceException {
 		System.out.println("Your balance is: $" + accountService.getAccountBalance());
@@ -113,7 +139,62 @@ public class App {
 			
 			for(Transfer p : pending) {
 				System.out.println(p.toString());	
+			}
+	}
+	
+	private void reconcilePendingRequests() throws TransferServiceException {
+		viewRequestTransfers();
+		
+		TransferDTO transferDto = new TransferDTO();
+		Transfer pendingTransfer;
+		boolean goodInput = false;
+		
+		while (!goodInput) {
+		
+			transferDto.setTransferId(console.getUserInputInteger("\nPlease enter the request ID to reconcile"));
+			pendingTransfer = transferService.getTransferById(transferDto.getTransferId());
+			
+			transferDto.setAmount(pendingTransfer.getAmount());
+			transferDto.setTransferToId(pendingTransfer.getAccountTo());
+			transferDto.setTransferFromId(pendingTransfer.getAccountFrom());
+			transferDto.setTransferTypeId(pendingTransfer.getTransferType());
+			
+			try {
+				int selection = console.getUserInputInteger("Please enter '1' to Approve or '2' to Reject request or '0' to return to menu. \n If approved, money will be deducted from your account immediately.");
+				
+				if(selection == 1) {
+					transferDto.setTransferStatusId(2);
+					transferService.reconcileTransfer(transferDto);
+					goodInput = true;
+					System.out.println("Request Closed");
+				}
+				else if(selection == 2) {
+					transferDto.setTransferStatusId(3);
+					transferService.reconcileTransfer(transferDto);
+					goodInput = true;
+					System.out.println("Request Closed");
+				}
+			}
+			catch (Exception e) {
+				System.out.println(e.toString());
+			}
 		}
+	}
+
+	private void viewRequestTransfers() throws TransferServiceException {
+		Transfer[] pending = transferService.viewPendingRequests(currentUser.getUser().getId());
+		if(pending.length == 0) {
+			System.out.println("There are no pending transfer requests");
+		}
+		else
+			System.out.println("Pending Requests: \n");
+			System.out.println("\n ***************************");
+			System.out.println("\n  Request Transfer Details");
+			System.out.println("\n ***************************");
+			
+			for(Transfer p : pending) {
+				System.out.println(p.toString());	
+			}	
 	}
 
 	private void sendBucks() throws AccountServiceException {

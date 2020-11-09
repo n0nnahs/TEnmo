@@ -75,7 +75,7 @@ public class AccountDAOIntegrationTests {
 	}
 	
 	@Test
-	public void findAll_returns_all_users() {
+	public void findAll_returns_all_users_and_create_creates_user() {
 	
 		List<User> allUsers = userDAO.findAll();
 		
@@ -101,12 +101,8 @@ public class AccountDAOIntegrationTests {
 	
 	@Test
 	public void returns_Account_From_Username() {
-		String extraTestUserSql = "INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)";
-		jdbc.update(extraTestUserSql, 3, "user3", "password");
-		String extraTestAccountSql = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
-		jdbc.update(extraTestAccountSql, 3, 3, 1000.00);
-		Account results = dao.getAccountByUsername("user3");
-		assertEquals(3, results.getAccountId());
+		Account results = dao.getAccountByUsername("user1");
+		assertEquals(1, results.getAccountId());
 		
 	}
 	@Test
@@ -120,6 +116,6 @@ public class AccountDAOIntegrationTests {
 		
 		assertEquals(before+100.00, after);
  	}
-	
+
 
 }

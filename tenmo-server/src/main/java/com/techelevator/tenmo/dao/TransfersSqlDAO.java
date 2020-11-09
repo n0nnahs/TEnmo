@@ -33,9 +33,32 @@ public class TransfersSqlDAO implements TransfersDAO {
 				   + "JOIN accounts a2 ON t.account_to = a2.account_id " 
 				   + "JOIN users u1 ON a1.account_id = u1.user_id "  
 				   + "JOIN users u2 ON a2.account_id = u2.user_id " 
-				   + "WHERE t.account_from = ? OR t.account_to = ?";
+				   + "WHERE t.account_from = ? OR t.account_to = ?"
+				   + "ORDER BY transfer_type_id";
 		
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId, accountId);
+		while(results.next()) {
+			Transfer transferResult = mapRowToTransfer(results);
+			transfers.add(transferResult);
+		}
+		return transfers;
+	}
+	
+	@Override
+	public List<Transfer> listRequests(int accountId) {
+		List<Transfer> transfers = new ArrayList<>();
+		String sql = "SELECT t.transfer_id, t.transfer_type_id, tt.transfer_type_desc, t.transfer_status_id, ts.transfer_status_desc, t.account_from, u1.username AS from_user, t.account_to, u2.username AS to_user, t.amount " 
+				   + "FROM transfers t "
+				   + "JOIN transfer_types tt USING(transfer_type_id) "
+				   + "JOIN transfer_statuses ts USING(transfer_status_id) "  
+				   + "JOIN accounts a1 ON t.account_from = a1.account_id " 
+				   + "JOIN accounts a2 ON t.account_to = a2.account_id " 
+				   + "JOIN users u1 ON a1.account_id = u1.user_id "  
+				   + "JOIN users u2 ON a2.account_id = u2.user_id " 
+				   + "WHERE t.account_from = ? AND t.transfer_status_id = 1 AND t.transfer_type_id = 1 "
+				   + "ORDER BY transfer_type_id";
+		
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId);
 		while(results.next()) {
 			Transfer transferResult = mapRowToTransfer(results);
 			transfers.add(transferResult);
@@ -64,7 +87,8 @@ public class TransfersSqlDAO implements TransfersDAO {
 				   + "JOIN accounts a2 ON t.account_to = a2.account_id " 
 				   + "JOIN users u1 ON a1.account_id = u1.user_id "  
 				   + "JOIN users u2 ON a2.account_id = u2.user_id " 
-				   + "WHERE (account_from = ? OR account_to = ?) AND transfer_status_id = 1";
+				   + "WHERE (account_from = ? OR account_to = ?) AND transfer_status_id = 1"
+				   + "ORDER BY t.transfer_type_id";
 			
 		
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId, accountId);

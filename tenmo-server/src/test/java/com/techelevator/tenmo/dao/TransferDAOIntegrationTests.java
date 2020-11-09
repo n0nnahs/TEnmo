@@ -57,10 +57,10 @@ public class TransferDAOIntegrationTests {
 		jdbc.update(insertTestAccount, 2, 2, 1000.00);
 		
 		String insertTestTransfer = "INSERT INTO transfers (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
-		"VALUES (DEFAULT, ?, ?, ?, ?, ?)";
-		jdbc.update(insertTestTransfer, 2, 2, 1, 2, 100.00);
-		jdbc.update(insertTestTransfer, 2, 2, 2, 1, 200.00);
-		jdbc.update(insertTestTransfer, 2, 1, 1, 2, 100.00);
+		"VALUES (?, ?, ?, ?, ?, ?)";
+		jdbc.update(insertTestTransfer, 1, 2, 2, 1, 2, 100.00);
+		jdbc.update(insertTestTransfer, 2, 2, 2, 2, 1, 200.00);
+		jdbc.update(insertTestTransfer, 3, 2, 1, 1, 2, 100.00);
 		
 	}
 	@After
@@ -78,16 +78,13 @@ public class TransferDAOIntegrationTests {
 		Assert.assertEquals(1, pendingTransfers.size());
 		
 	}
-//	private Transfer getTransfer(int transferId, int transferType, int statusId, int accountFrom, int accountTo, double amount) {
-//		Transfer theTransfer = new Transfer();
-//		theTransfer.setTransferId(transferId);
-//		theTransfer.setTransferType(transferType);
-//		theTransfer.setStatusId(statusId);
-//		theTransfer.setAccountFrom(accountFrom);
-//		theTransfer.setAccountTo(accountTo);
-//		theTransfer.setAmount(amount);
-//		return theTransfer;
-//		 
-//	}
+	@Test
+	public void returns_transfer_by_id() {
+		List<Transfer> results = dao.getTransferByID(1);
+		
+		Assert.assertEquals(1, results.get(0).getTransferId());
+		
+	
+	}
 
 }

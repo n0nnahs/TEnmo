@@ -32,10 +32,11 @@ public class RestTransferService {
 		return transfers;
 	}
 
-	public Transfer getTransferById() {
-		Transfer transfer = null;
-		transfer = restTemplate.exchange(BASE_URL + "transfers/{id}", HttpMethod.GET, makeAuthEntity(), Transfer.class).getBody();
-		return transfer;
+	public Transfer getTransferById(int id) {
+		Transfer[] transferArray = null;
+		transferArray = restTemplate.exchange(BASE_URL + "transfers?id=" + id, HttpMethod.GET, makeAuthEntity(), Transfer[].class).getBody();
+		List<Transfer> transferList = Arrays.asList(transferArray);
+		return transferList.get(0);
 	}
 
 	public Transfer sendTransfer(TransferDTO transferDto) throws TransferServiceException {
@@ -73,6 +74,17 @@ public class RestTransferService {
 	
 		return pending;
 
+	}
+	
+	public void reconcileTransfer(TransferDTO transferDTO) {
+		restTemplate.exchange(BASE_URL + "transfers?Id=" + transferDTO.getTransferId(), HttpMethod.PUT, makeAuthTransferDTO(transferDTO), Transfer.class);
+		
+	}
+	
+	public Transfer[] viewPendingRequests(int accountId) throws TransferServiceException {
+		Transfer[] pending = null;
+		pending = restTemplate.exchange(BASE_URL + "transfers/pending?transferRequest=" + accountId, HttpMethod.GET, makeAuthEntity(), Transfer[].class).getBody();
+		return pending;
 	}
 
 	public Account[] viewAvailableAccounts() throws AccountServiceException {

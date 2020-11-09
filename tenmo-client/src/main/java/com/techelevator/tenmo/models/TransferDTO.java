@@ -2,7 +2,7 @@ package com.techelevator.tenmo.models;
 
 public class TransferDTO {
 	
-
+	int transferId;
 	String fromUserName;
 	int transferStatusId;
 	int transferToId;
@@ -10,6 +10,14 @@ public class TransferDTO {
 	Double amount;
 	int transferFromId;
 	
+	public int getTransferId() {
+		return transferId;
+	}
+
+	public void setTransferId(int transferId) {
+		this.transferId = transferId;
+	}
+
 	public String getFromUserName() {
 		return fromUserName;
 	}

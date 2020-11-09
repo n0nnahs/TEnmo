@@ -13,7 +13,10 @@ public interface TransfersDAO {
 		
 	List<Transfer> getTransferByID(int transferId);
 
+	List<Transfer> listRequests(int accountId);
+
 	void updateRequest(TransferDTO transfer);
 
 	int newTransfer(TransferDTO transferDTO);
+
 }
