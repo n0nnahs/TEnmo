@@ -116,12 +116,18 @@ public class App {
 			System.out.println("There are no transactions for this user");
 		} else
 			System.out.println("Your transfer history: \n");
-			System.out.println("\n *************************");
-			System.out.println("\n Transfer Details");
-			System.out.println("\n *************************");
-			
+			System.out.println("-------------------------------------------");
+			System.out.println("Transfer");
+			System.out.println("ID \t From/To \t Amount");
+			System.out.println("-------------------------------------------");
 			for (Transfer t : transfers) {
-				System.out.println(t.toString());
+				System.out.println(t.viewTransfers(currentUser.getUser()));
+			}
+			System.out.println();
+			int transferId = console.getUserInputInteger("Please enter the transfer ID to view details (0 to cancel)");
+			if(transferId != 0)
+			{
+				System.out.println(transferService.getTransferById(transferId).toStringDetails());
 			}
 
 	}

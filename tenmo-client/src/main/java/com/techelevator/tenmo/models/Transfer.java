@@ -14,17 +14,28 @@ public class Transfer {
 	private double amount;
 
 	public Transfer() {
-
+		
 	}
 
-	@Override
-	public String toString() {
-		return "\n ID: " + transferId +
-			   "\n Type: " + transferType + " " + typeName +
-			   "\n Status: " + statusId + " " + statusName +
-			   "\n From: " + accountFrom + " " + fromUsername + 
-			   "\n To: " + accountTo + " " + toUsername + 
-			   "\n Amount: "+ amount;
+	public String viewTransfers(User user) {
+		if(fromUsername.equals(user.getUsername())) {
+			return transferId + "\t TO:   " + toUsername + "\t $" + amount;
+		}
+		else return transferId + "\t FROM: " + fromUsername+ "\t $" + amount;
+	}
+				
+			
+	
+	public String toStringDetails() {
+		return	"\n ***************************" +
+				"\n  Request Transfer Details" +
+				"\n ***************************" +
+				"\n ID: " + transferId +
+				"\n Type: " + transferType + " " + typeName +
+				"\n Status: " + statusId + " " + statusName +
+				"\n From: " + accountFrom + " " + fromUsername + 
+				"\n To: " + accountTo + " " + toUsername + 
+				"\n Amount: "+ amount;
 	}
 
 	public Transfer(int transferId, int transferType, String typeName, int statusId, String statusName, int accountFrom,
