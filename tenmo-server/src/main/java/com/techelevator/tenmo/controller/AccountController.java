@@ -18,14 +18,14 @@ import com.techelevator.tenmo.model.Account;
 public class AccountController {
 
 	private AccountDAO accountDAO;
-	
+	 
 	public AccountController(AccountDAO dao) {
 		this.accountDAO = dao;
 	}
 	
 	@RequestMapping(path = "/accounts", method = RequestMethod.GET)
-	public List<Account> list(){
-		return accountDAO.list();
+	public List<Account> list(Principal principal){
+		return accountDAO.list(accountDAO.getAccountByUsername(principal.getName()).getAccountId());
 	}
 	
 	@RequestMapping(path = "/accounts/{id}", method = RequestMethod.GET)

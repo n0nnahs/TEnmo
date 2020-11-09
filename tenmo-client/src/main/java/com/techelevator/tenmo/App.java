@@ -37,7 +37,6 @@ public class App {
 	private AuthenticationService authenticationService;
 	private RestAccountService accountService = new RestAccountService(API_BASE_URL);
 	private RestTransferService transferService = new RestTransferService(API_BASE_URL);
-	private TransferDTO transferDto = new TransferDTO();
 
 	public static void main(String[] args) throws AccountServiceException, TransferServiceException {
 		App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL));
@@ -117,14 +116,18 @@ public class App {
 		}
 	}
 
-	private void sendBucks() throws AccountServiceException, TransferServiceException {
+	private void sendBucks() throws AccountServiceException {
+		TransferDTO transferDto = new TransferDTO();
 		boolean goodInput = false;
+
+		transferDto.setTransferTypeId(2);
+		transferDto.setTransferStatusId(2);
+		
 		while (!goodInput) {
 		Account[] theAccounts = transferService.viewAvailableAccounts();
 		System.out.println("-------------------------------------------");
-		System.out.println("Available account ID's for transfer: \n");
-		System.out.println("Users   Username");
-		System.out.println("   ID"); 
+		System.out.println("User    Username");
+		System.out.println("  ID"); 
 		System.out.println("-------------------------------------------");
 		System.out.println();
 		for (Account account : theAccounts) {
@@ -134,18 +137,60 @@ public class App {
 		transferDto.setTransferToId(console.getUserInputInteger("\nPlease enter the account ID to transfer to"));
 			try {
 				transferDto.setAmount(console.getUserInputDouble("Please enter the amount you would like to send"));
+				Transfer transfer = transferService.sendTransfer(transferDto);
 				goodInput = true;
+
+				System.out.println();
+				System.out.println("\n *************************");
+				System.out.println("\n Transfer Details");
+				System.out.println("\n *************************");
+				System.out.println(transfer.toString());
+				System.out.println("Approved");
+			
 			} catch (Exception e) {
-				e.getMessage();
+				 System.out.println(e.toString());
 			}
-			transferService.sendTransfer(transferDto);
 			
 		}
 
 	}
 
-	private void requestBucks() {
-		// TODO Auto-generated method stub
+	private void requestBucks() throws TransferServiceException, AccountServiceException {
+		TransferDTO transferDto = new TransferDTO();
+		boolean goodInput = false;
+
+		transferDto.setTransferTypeId(1);
+		transferDto.setTransferStatusId(1);
+		
+		while (!goodInput) {
+		Account[] theAccounts = transferService.viewAvailableAccounts();
+		System.out.println("-------------------------------------------");
+		System.out.println("             REQUEST TRANSFER  ");
+		System.out.println();
+		System.out.println("User     Username");
+		System.out.println("  ID"); 
+		System.out.println("-------------------------------------------");
+		System.out.println();
+		for (Account account : theAccounts) {
+			System.out.println("(" + account.getAccountId() + ")      " + account.getUsername());
+		}
+		System.out.println("----------------------");
+		transferDto.setTransferFromId(console.getUserInputInteger("\nPlease enter the account ID to transfer to"));
+			try {
+				transferDto.setAmount(console.getUserInputDouble("Please enter the amount you would like to request"));
+				goodInput = true;
+			} catch (Exception e) {
+				e.getMessage();
+			}
+			Transfer transfer = transferService.requestTransfer(transferDto);
+			System.out.println();
+			System.out.println("\n *************************");
+			System.out.println("\n Transfer Details");
+			System.out.println("\n *************************");
+			System.out.println(transfer.toString());
+			System.out.println("Request has been sent");
+			
+		}
 
 	}
 

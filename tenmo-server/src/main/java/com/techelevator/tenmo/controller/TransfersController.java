@@ -10,11 +10,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.techelevator.tenmo.dao.AccountDAO;
 import com.techelevator.tenmo.dao.TransfersDAO;
+import com.techelevator.tenmo.model.InsufficientFundsException;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.TransferDTO;
 
@@ -32,9 +34,12 @@ public class TransfersController {
 	}
 	
 	@RequestMapping(path = "/transfers", method = RequestMethod.GET)
-	public List<Transfer> list(Principal principal) {
-		int accountId = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
-		return transferDAO.listAllForUser(accountId);
+	public List<Transfer> list(Principal principal, @RequestParam(defaultValue = "-1") int id) {
+		if(id == -1) {
+			int accountId = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
+			return transferDAO.listAllForUser(accountId);
+		}else 
+			return transferDAO.getTransferByID(id); 
 	}
 	
 	@RequestMapping(path = "/transfers/pending", method = RequestMethod.GET)
@@ -43,37 +48,84 @@ public class TransfersController {
 	return transferDAO.listPendingTransfers(accountId);
 	}
 	
+	@ResponseStatus(HttpStatus.ACCEPTED)
+	@RequestMapping(path = "/transfers", method = RequestMethod.PUT)
+	public Transfer updateTransfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) {
+		transferDAO.updateRequest(transferDTO);
+		return transferDAO.getTransferByID(transferDTO.getTransferId()).get(0);
+	}
+	
 	@ResponseStatus(HttpStatus.CREATED)
-	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
-	public void transfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) throws Exception{
-		//uses the principal to get username, and then uses the username to get the account and then gets the account ID from the username
-		int fromAccount = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
+	@RequestMapping(path = "/transfers/request", method = RequestMethod.POST)
+	public Transfer request(@Valid @RequestBody TransferDTO transferDTO, Principal principal) throws Exception{
+		transferDTO.setTransferToId(accountDAO.getAccountByUsername(principal.getName()).getUserId());
 		
-		//takes body info from client side and creates transferDTO object
-		Transfer transfer = new Transfer();
-		transfer.setAmount(transferDTO.getAmount());
-		transfer.setAccountTo(transferDTO.getTransferToId());
-		transfer.setAccountFrom(fromAccount);
-		
-		Double fromAccountBalance = accountDAO.getAccountById(fromAccount).getBalance();
-		Double newFromAccountBalance = fromAccountBalance - transfer.getAmount();
-
-
-		if(newFromAccountBalance >= 0) {
-			//writes the transfer to the DB
-			transferDAO.newTransfer(transfer);
-		
-			//update balance in fromaccount to subtract amount
-			accountDAO.updateBalance(newFromAccountBalance, transfer.getAccountFrom());
-
-			//add amount to toaccount
-			Double newToAccountBalance = accountDAO.getAccountById(transfer.getAccountTo()).getBalance() + transfer.getAmount();
-			//update balance in toaccount add amount
-			accountDAO.updateBalance(newToAccountBalance, transfer.getAccountTo());
-		}
-		else {
-			throw new Exception();
-		}
+		return transferDAO.getTransferByID(transferDAO.newTransfer(transferDTO)).get(0);
 	
 	}
+	
+	@ResponseStatus(HttpStatus.CREATED)
+	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
+	public Transfer transfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) throws Exception{
+		//uses the principal to get username, and then uses the username to get the account and then gets the account ID from the username
+//		int fromAccount = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
+		
+		//takes body info from client side and creates transfer object
+//		Transfer transfer = new Transfer();
+//		transfer.setAmount(transferDTO.getAmount());
+//		transfer.setTransferType(transferDTO.getTransferTypeId());
+//		transfer.setStatusId(transferDTO.getTransferStatusId());
+		
+		transferDTO.setTransferFromId(accountDAO.getAccountByUsername(principal.getName()).getUserId());
+
+		//for Sending money
+		if(transferDTO.getTransferTypeId() == 2) {
+//			transfer.setAccountTo(transferDTO.getTransferToId());
+//			transfer.setToUsername(accountDAO.getAccountById(transfer.getAccountTo()).getUsername());
+//			transfer.setFromUsername(principal.getName());
+//			transfer.setAccountFrom(accountDAO.getAccountByUsername(principal.getName()).getAccountId());
+			Double fromAccountBalance = accountDAO.getAccountById(transferDTO.getTransferFromId()).getBalance();
+			Double newFromAccountBalance = fromAccountBalance - transferDTO.getAmount();
+
+			//makes sure the user will not be negative after transaction
+			if(newFromAccountBalance >= 0) {
+				//writes the transfer to the DB
+				int id = transferDAO.newTransfer(transferDTO);
+			
+				//update balance in fromaccount to subtract amount
+				accountDAO.updateBalance(newFromAccountBalance, transferDTO.getTransferFromId());
+	
+				//add amount to toaccount
+				Double newToAccountBalance = accountDAO.getAccountById(transferDTO.getTransferToId()).getBalance() + transferDTO.getAmount();
+				//update balance in toaccount add amount
+				accountDAO.updateBalance(newToAccountBalance, transferDTO.getTransferToId());
+				
+				//returns transfer ID for confirmation
+				return transferDAO.getTransferByID(id).get(0);
+			}
+			else {
+				throw new InsufficientFundsException();
+			}
+		}else throw new Exception();
+		//for transfer requests
+//		if(transfer.getTransferType() == 1) {
+//			transfer.setAccountFrom(transferDTO.getTransferFromId());
+//			transfer.setFromUsername(accountDAO.getAccountById(transfer.getAccountFrom()).getUsername());
+//			transfer.setToUsername(principal.getName());
+//			transfer.setAccountTo(accountDAO.getAccountByUsername(transfer.getToUsername()).getAccountId());
+//			
+//			//creates the new transfer but doesn't remove money
+//			int id = transferDAO.newTransfer(transfer);
+//			
+//			//returns transfer for confirmation
+//			return transferDAO.getTransferByID(id).get(0);
+//		}
+//		else throw new Exception();
+	}
+	
+	
+	
+	
+	
+	
 }

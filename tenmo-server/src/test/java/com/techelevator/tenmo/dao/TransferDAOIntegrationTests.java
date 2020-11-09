@@ -19,15 +19,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class AccountDAOIntegrationTests {
+public class TransferDAOIntegrationTests {
 	
 	private static SingleConnectionDataSource dataSource;
-	private AccountSqlDAO dao;
-	private UserSqlDAO userDAO;
-	private JdbcTemplate jdbc;
-
+	private TransfersSqlDAO dao;
 	
 	@BeforeClass
 	public static void setupDataSource() {
@@ -37,20 +35,17 @@ public class AccountDAOIntegrationTests {
 		dataSource.setPassword("postgres1");
 		dataSource.setAutoCommit(false);
 		
-	}
-	
+	} 
 	@AfterClass
 	public static void closeDataSource() throws SQLException {
 		dataSource.destroy();
 	}
-	
 	@Before
 	public void setup() {
-		dao = new AccountSqlDAO(dataSource);
-		jdbc = new JdbcTemplate(dataSource);
-		userDAO = new UserSqlDAO(jdbc);
+		dao = new TransfersSqlDAO(dataSource);
+		JdbcTemplate jdbc = new JdbcTemplate(dataSource);
 		
-		String deleteTables = "TRUNCATE TABLE accounts, transfers, users";
+		String deleteTables = "TRUNCATE TABLE transfers, accounts, users";
 		jdbc.update(deleteTables);
 		
 		String insertTestUser = "INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)";
@@ -68,58 +63,31 @@ public class AccountDAOIntegrationTests {
 		jdbc.update(insertTestTransfer, 2, 1, 1, 2, 100.00);
 		
 	}
-	
 	@After
 	public void rollback() throws SQLException {
 		dataSource.getConnection().rollback();
 	}
-	
 	@Test
-	public void findAll_returns_all_users() {
-	
-		List<User> allUsers = userDAO.findAll();
-		
-		userDAO.create("test", "$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC");
-		List<User> allUsersPlusTest = userDAO.findAll();
-	
-		Assert.assertEquals(allUsers.size() + 1, allUsersPlusTest.size());
-		
-	}
-		
-
-	@Test
-	public void list_returns_list_of_accounts() {
-		List<Account> listAccounts = dao.list(1);
-		String extraTestUserSql = "INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)";
-		jdbc.update(extraTestUserSql, 3, "user3", "password");
-		String extraTestAccountSql = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
-		jdbc.update(extraTestAccountSql, 3, 3, 1000.00);
-		List<Account> listAccountsPlusTest = dao.list(1);
-		
-		assertEquals(listAccounts.size() + 1, listAccountsPlusTest.size());
-		}
-	
-	@Test
-	public void returns_Account_From_Username() {
-		String extraTestUserSql = "INSERT INTO users (user_id, username, password_hash) VALUES (?, ?, ?)";
-		jdbc.update(extraTestUserSql, 3, "user3", "password");
-		String extraTestAccountSql = "INSERT INTO accounts (account_id, user_id, balance) VALUES (?, ?, ?)";
-		jdbc.update(extraTestAccountSql, 3, 3, 1000.00);
-		Account results = dao.getAccountByUsername("user3");
-		assertEquals(3, results.getAccountId());
-		
+	public void listAllForUser_returns_all_transfers_for_user() {
+		List<Transfer> theTransfers = dao.listAllForUser(1);
+		Assert.assertEquals(3, theTransfers.size());
 	}
 	@Test
- 	public void updateBalance_updates_account_balance() {
-
-		Account account = dao.getAccountById(userDAO.findIdByUsername("user1"));
+	public void listPendingTransfers_lists_all_pending_transfers() {
+		List<Transfer> pendingTransfers = dao.listPendingTransfers(1);
+		Assert.assertEquals(1, pendingTransfers.size());
 		
-		Double before = account.getBalance();
-		
-		Double after = dao.updateBalance(account.getBalance()+100.00, account.getAccountId());
-		
-		assertEquals(before+100.00, after);
- 	}
-	
+	}
+//	private Transfer getTransfer(int transferId, int transferType, int statusId, int accountFrom, int accountTo, double amount) {
+//		Transfer theTransfer = new Transfer();
+//		theTransfer.setTransferId(transferId);
+//		theTransfer.setTransferType(transferType);
+//		theTransfer.setStatusId(statusId);
+//		theTransfer.setAccountFrom(accountFrom);
+//		theTransfer.setAccountTo(accountTo);
+//		theTransfer.setAmount(amount);
+//		return theTransfer;
+//		 
+//	}
 
 }
