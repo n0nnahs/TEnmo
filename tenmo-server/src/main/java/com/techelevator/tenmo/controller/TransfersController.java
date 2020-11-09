@@ -55,6 +55,27 @@ public class TransfersController {
 	@RequestMapping(path = "/transfers", method = RequestMethod.PUT)
 	public Transfer updateTransfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) {
 		transferDAO.updateRequest(transferDTO);
+		if(transferDTO.getTransferStatusId() == 2) {
+			Double fromAccountBalance = accountDAO.getAccountById(transferDTO.getTransferFromId()).getBalance();
+			Double newFromAccountBalance = fromAccountBalance - transferDTO.getAmount();
+
+			//makes sure the user will not be negative after transaction
+			if(newFromAccountBalance >= 0) {
+				//writes the transfer to the DB
+				int id = transferDAO.newTransfer(transferDTO);
+			
+				//update balance in fromaccount to subtract amount
+				accountDAO.updateBalance(newFromAccountBalance, transferDTO.getTransferFromId());
+
+				//add amount to toaccount
+				Double newToAccountBalance = accountDAO.getAccountById(transferDTO.getTransferToId()).getBalance() + transferDTO.getAmount();
+				//update balance in toaccount add amount
+				accountDAO.updateBalance(newToAccountBalance, transferDTO.getTransferToId());
+				
+				//returns transfer ID for confirmation
+				return transferDAO.getTransferByID(id).get(0);
+			}
+		}
 		return transferDAO.getTransferByID(transferDTO.getTransferId()).get(0);
 	}
 	

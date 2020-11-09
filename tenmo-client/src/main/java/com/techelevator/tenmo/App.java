@@ -127,7 +127,7 @@ public class App {
 			int transferId = console.getUserInputInteger("Please enter the transfer ID to view details (0 to cancel)");
 			if(transferId != 0)
 			{
-				System.out.println(transferService.getTransferById(transferId).toStringDetails());
+				System.out.println(transferService.getTransferById(transferId).toString());
 			}
 
 	}
@@ -148,7 +148,7 @@ public class App {
 			}
 	}
 	
-	private void reconcilePendingRequests() throws TransferServiceException {
+	private void reconcilePendingRequests() throws TransferServiceException, AccountServiceException {
 		viewRequestTransfers();
 		
 		TransferDTO transferDto = new TransferDTO();
@@ -187,10 +187,11 @@ public class App {
 		}
 	}
 
-	private void viewRequestTransfers() throws TransferServiceException {
+	private void viewRequestTransfers() throws TransferServiceException, AccountServiceException {
 		Transfer[] pending = transferService.viewPendingRequests(currentUser.getUser().getId());
 		if(pending.length == 0) {
 			System.out.println("There are no pending transfer requests");
+			pendingMenu();
 		}
 		else
 			System.out.println("Pending Requests: \n");

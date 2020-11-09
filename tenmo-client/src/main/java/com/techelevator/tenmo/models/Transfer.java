@@ -16,7 +16,7 @@ public class Transfer {
 	public Transfer() {
 		
 	}
-
+	
 	public String viewTransfers(User user) {
 		if(fromUsername.equals(user.getUsername())) {
 			return transferId + "\t TO:   " + toUsername + "\t $" + amount;
@@ -24,9 +24,8 @@ public class Transfer {
 		else return transferId + "\t FROM: " + fromUsername+ "\t $" + amount;
 	}
 				
-			
-	
-	public String toStringDetails() {
+	@Override	
+	public String toString() {
 		return	"\n ***************************" +
 				"\n  Request Transfer Details" +
 				"\n ***************************" +
