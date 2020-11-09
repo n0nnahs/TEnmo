@@ -33,7 +33,8 @@ public class TransfersSqlDAO implements TransfersDAO {
 				   + "JOIN accounts a2 ON t.account_to = a2.account_id " 
 				   + "JOIN users u1 ON a1.account_id = u1.user_id "  
 				   + "JOIN users u2 ON a2.account_id = u2.user_id " 
-				   + "WHERE t.account_from = ? OR t.account_to = ?";
+				   + "WHERE t.account_from = ? OR t.account_to = ?"
+				   + "ORDER BY t.transfer_id";
 		
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId, accountId);
 		while(results.next()) {
@@ -64,7 +65,8 @@ public class TransfersSqlDAO implements TransfersDAO {
 				   + "JOIN accounts a2 ON t.account_to = a2.account_id " 
 				   + "JOIN users u1 ON a1.account_id = u1.user_id "  
 				   + "JOIN users u2 ON a2.account_id = u2.user_id " 
-				   + "WHERE (account_from = ? OR account_to = ?) AND transfer_status_id = 1";
+				   + "WHERE (account_from = ? OR account_to = ?) AND transfer_status_id = 1"
+				   + "ORDER BY t.transfer_id";
 			
 		
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId, accountId);

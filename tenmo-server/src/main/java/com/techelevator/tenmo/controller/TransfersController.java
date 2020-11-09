@@ -67,60 +67,33 @@ public class TransfersController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
 	public Transfer transfer(@Valid @RequestBody TransferDTO transferDTO, Principal principal) throws Exception{
-		//uses the principal to get username, and then uses the username to get the account and then gets the account ID from the username
-//		int fromAccount = (accountDAO.getAccountByUsername(principal.getName())).getAccountId();
-		
-		//takes body info from client side and creates transfer object
-//		Transfer transfer = new Transfer();
-//		transfer.setAmount(transferDTO.getAmount());
-//		transfer.setTransferType(transferDTO.getTransferTypeId());
-//		transfer.setStatusId(transferDTO.getTransferStatusId());
-		
-		transferDTO.setTransferFromId(accountDAO.getAccountByUsername(principal.getName()).getUserId());
-
-		//for Sending money
-		if(transferDTO.getTransferTypeId() == 2) {
-//			transfer.setAccountTo(transferDTO.getTransferToId());
-//			transfer.setToUsername(accountDAO.getAccountById(transfer.getAccountTo()).getUsername());
-//			transfer.setFromUsername(principal.getName());
-//			transfer.setAccountFrom(accountDAO.getAccountByUsername(principal.getName()).getAccountId());
-			Double fromAccountBalance = accountDAO.getAccountById(transferDTO.getTransferFromId()).getBalance();
-			Double newFromAccountBalance = fromAccountBalance - transferDTO.getAmount();
-
-			//makes sure the user will not be negative after transaction
-			if(newFromAccountBalance >= 0) {
-				//writes the transfer to the DB
-				int id = transferDAO.newTransfer(transferDTO);
-			
-				//update balance in fromaccount to subtract amount
-				accountDAO.updateBalance(newFromAccountBalance, transferDTO.getTransferFromId());
 	
-				//add amount to toaccount
-				Double newToAccountBalance = accountDAO.getAccountById(transferDTO.getTransferToId()).getBalance() + transferDTO.getAmount();
-				//update balance in toaccount add amount
-				accountDAO.updateBalance(newToAccountBalance, transferDTO.getTransferToId());
-				
-				//returns transfer ID for confirmation
-				return transferDAO.getTransferByID(id).get(0);
-			}
-			else {
-				throw new InsufficientFundsException();
-			}
-		}else throw new Exception();
-		//for transfer requests
-//		if(transfer.getTransferType() == 1) {
-//			transfer.setAccountFrom(transferDTO.getTransferFromId());
-//			transfer.setFromUsername(accountDAO.getAccountById(transfer.getAccountFrom()).getUsername());
-//			transfer.setToUsername(principal.getName());
-//			transfer.setAccountTo(accountDAO.getAccountByUsername(transfer.getToUsername()).getAccountId());
-//			
-//			//creates the new transfer but doesn't remove money
-//			int id = transferDAO.newTransfer(transfer);
-//			
-//			//returns transfer for confirmation
-//			return transferDAO.getTransferByID(id).get(0);
-//		}
-//		else throw new Exception();
+		transferDTO.setTransferFromId(accountDAO.getAccountByUsername(principal.getName()).getUserId());
+		
+		Double fromAccountBalance = accountDAO.getAccountById(transferDTO.getTransferFromId()).getBalance();
+		Double newFromAccountBalance = fromAccountBalance - transferDTO.getAmount();
+
+		//makes sure the user will not be negative after transaction
+		if(newFromAccountBalance >= 0) {
+			//writes the transfer to the DB
+			int id = transferDAO.newTransfer(transferDTO);
+		
+			//update balance in fromaccount to subtract amount
+			accountDAO.updateBalance(newFromAccountBalance, transferDTO.getTransferFromId());
+
+			//add amount to toaccount
+			Double newToAccountBalance = accountDAO.getAccountById(transferDTO.getTransferToId()).getBalance() + transferDTO.getAmount();
+			//update balance in toaccount add amount
+			accountDAO.updateBalance(newToAccountBalance, transferDTO.getTransferToId());
+			
+			//returns transfer ID for confirmation
+			return transferDAO.getTransferByID(id).get(0);
+		}
+		else {
+			throw new InsufficientFundsException();
+		}
+	
+
 	}
 	
 	
